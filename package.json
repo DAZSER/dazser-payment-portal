@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.html",
   "//": [
-    "js-compile: This compiles the typescript, then it removes the module import from the ux.js file. (I'm statically calling a <script src> tag in html"
+    "js-compile: This compiles the typescript, then it removes the module import from the ux.js file. (I'm statically calling a <script src> tag in html",
+    "All my PRODUCTION dependencies are in the dependencies, even though I technically don't need formdata, inputmask, and weakmap node modules in production (see vendor.js)"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
