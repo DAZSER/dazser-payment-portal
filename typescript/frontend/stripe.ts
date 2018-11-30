@@ -8,6 +8,7 @@ interface _data {
 
 // Create the Strip Card Element
 // https://stripe.com/docs/elements
+const stripe = Stripe("***REMOVED***");
 //const stripe = Stripe("***REMOVED***");
 const elements = stripe.elements({
   fonts: [{
