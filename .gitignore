@@ -63,7 +63,4 @@ typings/
 .serverless
 *.min.*
 .build
-*.js
-!test.js
-!postcss.config.js
 *.hbs
