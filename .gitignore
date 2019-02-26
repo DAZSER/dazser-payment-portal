@@ -65,4 +65,5 @@ typings/
 .build
 *.js
 !test.js
+!postcss.config.js
 *.hbs
