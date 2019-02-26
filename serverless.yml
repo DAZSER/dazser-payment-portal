@@ -17,33 +17,38 @@ plugins:
   - serverless-offline
 
 custom:
+  stage: ${opt:stage, self:provider.stage}
+  stageVariables:
+      env: ${self:custom.stage}
+  domains:
+    prod: pay.dazser.com
+    dev: dev-pay.dazser.com
   customDomain:
-    enabled: ${opt:customDomainEnabled}
-    domainName: pay.dazser.com
+    domainName: ${self:custom.domains.${self:custom.stage}}
     basePath: ''
-    stage: ${self:provider.stage}
-    createRoute53Record: false
-#  prod:
-#    backend_key: "***REMOVED***"
-#  dev:
-#    backend_key: "***REMOVED***"
-
-#  environment:
-#    variable1: value1
+    stage: ${self:custom.stage}
+    createRoute53Record: true
 
 functions:
   frontend:
     handler: frontend.handler
     events:
       - http: ANY /
-      - http: 'ANY {proxy+}'
-#    environment:
-#      STRIPE_JS_KEY: "***REMOVED***"
+      - http: ANY /{any+}
+    environment:
+      STRIPE_ATLANTA_PUBLIC_KEY: "***REMOVED***"
+      STRIPE_BALTIMORE_PUBLIC_KEY: "***REMOVED***"
+      STRIPE_BIRMINGHAM_PUBLIC_KEY: "***REMOVED***"
+      STRIPE_ORLANDO_PUBLIC_KEY: "***REMOVED***"
+      STRIPE_TAMPA_PUBLIC_KEY: "***REMOVED***"
   backend:
     handler: backend.handler
     environment:
-      STRIPE_KEY: "***REMOVED***"
-      AWS_REGION_NAME: ${self:provider.region}
+      STRIPE_ATLANTA_PRIVATE_KEY: "***REMOVED***"
+      STRIPE_BALTIMORE_PRIVATE_KEY: "***REMOVED***"
+      STRIPE_BIRMINGHAM_PRIVATE_KEY: "***REMOVED***"
+      STRIPE_ORLANDO_PRIVATE_KEY: "***REMOVED***"
+      STRIPE_TAMPA_PRIVATE_KEY: "***REMOVED***"
       FROM_EMAIL: "alpha@dazser.com"
       TO_EMAIL: "network.admin@dazser.com"
       MYSQL_HOST: "***REMOVED***"
