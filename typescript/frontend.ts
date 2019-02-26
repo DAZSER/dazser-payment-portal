@@ -11,10 +11,6 @@ app.use(Express.static(join(__dirname, "public")));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.enable("strict routing");
-
-app.disable("view cache");
-
 app.engine("hbs", hbs());
 app.set("view engine", "hbs");
 
@@ -74,7 +70,7 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
       total = totals.display.total;
     } catch {
       // Something is wrong with the info's encoding
-      console.log("bad params", req.params.info);
+      console.error("bad params", req.params.info);
     }
   }
 
@@ -94,17 +90,14 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
       company: cityName,
     },
   };
-  console.log(context);
   res.status(200).render("index", context);
 });
 
-app.get("/", (req: Express.Request, res: Express.Response) => {
-  console.log("/", req.path);
+app.get("/", (_req: Express.Request, res: Express.Response) => {
   res.status(200).render("map");
 });
 
-app.get("*", (req: Express.Request, res: Express.Response) => {
-  console.log("*", req.path);
+app.get("*", (_req: Express.Request, res: Express.Response) => {
   res.status(404).send();
 });
 
