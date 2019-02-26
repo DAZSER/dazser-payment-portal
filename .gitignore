@@ -63,5 +63,6 @@ typings/
 .serverless
 *.min.*
 .build
-!test/**/.js
+*.js
+!test.js
 *.hbs
