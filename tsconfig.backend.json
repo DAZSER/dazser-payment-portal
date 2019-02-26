@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "ES2017",
+    "outDir": "",
+    "rootDir": "typescript",
+  },
+  "exclude": [
+    "public",
+    "node_modules",
+    "typescript/stripe.ts",
+    "typescript/ux.ts",
+    "typescript/app.ts"
+  ]
+}

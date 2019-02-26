@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
+    "outDir": ".build/js",                        /* Redirect output structure to the directory. */
+    "rootDir": "typescript",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+  },
+  "exclude": [
+    "public",
+    "node_modules",
+    "typescript/backend.ts",
+    "typescript/email.ts",
+    "typescript/frontend.ts",
+    "typescript/logger.ts"
+  ]
+}
