@@ -64,3 +64,4 @@ typings/
 *.min.*
 .build
 !test/**/.js
+*.hbs
