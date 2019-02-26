@@ -1,22 +1,16 @@
-"use strict";
+// Frontend
+import { StripeJS } from "stripejs";
 
-interface _data {
+interface IData {
   [key: string]: any;
-};
-
-/// <reference types="stripe-v3" />
+}
 
 // Create the Strip Card Element
 // https://stripe.com/docs/elements
-const stripe = Stripe("***REMOVED***");
-//const stripe = Stripe("***REMOVED***");
-const elements = stripe.elements({
-  fonts: [{
-    // Mimic Bootstrap default fonts
-    family: "-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Helvetica Neue', Arial, sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol' !default;'"
-  }]
-});
-const card = elements.create("card");
+// @ts-ignore
+const stripe: StripeJS = new Stripe("{{stripe.publicKey}}");
+const elements = stripe.elements();
+const card = elements.create("card", {});
 card.mount("#card-element");
 
 const displayError = document.querySelector("#card-errors") as HTMLDivElement;
@@ -48,17 +42,19 @@ const stripeTokenHandler = ( token: any ) => {
 
   const fd = new FormData( form );
 
-  let data: _data = {};
+  const data: IData = {};
 
   fd.forEach( (value, key) => {
     data[key] = value;
   });
 
   const xhr = new XMLHttpRequest();
-  xhr.addEventListener("error", (event) => {});
+  xhr.addEventListener("error", (event) => {
+    console.log(event);
+  });
 
   xhr.open(form.method, form.action);
-
+  // This sends the form to /charge
   xhr.send(JSON.stringify(data));
 
   xhr.addEventListener("loadend", (response) => {
@@ -73,18 +69,21 @@ const stripeTokenHandler = ( token: any ) => {
 
     // Remove the form and the lead
     const lead = document.querySelector(".lead") as HTMLParagraphElement;
-    try{
+    try {
       try {
         lead.remove();
-      } catch(err) {
+      } catch (err) {
         try {
           // @ts-ignore null error
           lead.parentNode.removeChild(lead);
         } finally {
+          // console.log()
         }
       } finally {
+        // console.log()
       }
     } finally {
+      // console.log()
     }
 
     // Remove all children in the form
@@ -98,7 +97,7 @@ const stripeTokenHandler = ( token: any ) => {
 
   // Finally, submit the form!
   // We are submitting via XHR, so I don't need to submit() the form
-  //form.submit();
+  // form.submit();
 };
 
 // This function will switch the submit button between submittable and submitting
@@ -141,12 +140,14 @@ form.addEventListener("submit", ( event ) => {
   payButtonStateChanger("submitting");
 
   stripe.createToken(card).then( (result) => {
+    // This function submits the data to Stripe, then deals with the token response
     const errorElement = document.querySelector("#form-errors") as HTMLDivElement;
     if (result.error) {
       payButtonStateChanger("submittable");
     } else {
       // Attach the token to the form and send it to my server
       errorElement.classList.add("d-none");
+      // Deal with the form itself
       stripeTokenHandler(result.token);
     }
   });
