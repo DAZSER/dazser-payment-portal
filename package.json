@@ -42,7 +42,7 @@
     "@types/stripejs": "^3.0.4",
     "@types/validator": "^10",
     "autoprefixer": "^9.4.9",
-    "aws-sdk": "^2.410.0",
+    "aws-sdk": "^2.411.0",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
     "clean-css-cli": "^4.2.1",
