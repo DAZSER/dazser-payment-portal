@@ -1,11 +1,11 @@
 // Backend
 import Big from "big.js";
+// @ts-ignore Stripe is exportable
+import {Stripe} from "stripe";
 import Validator from "validator";
 import email from "./email";
 import calculateFee from "./fee";
 import logger, { EventType } from "./logger";
-// @ts-ignore Stripe is exportable
-import {Stripe} from "stripe";
 
 interface IReturnData {
   message: string;
