@@ -2,8 +2,8 @@
 import bodyParser from "body-parser";
 import Express from "express";
 import hbs from "express-handlebars";
-import favicon from "serve-favicon";
 import { join } from "path";
+import favicon from "serve-favicon";
 import serverless from "serverless-http";
 import calculateFee from "./fee";
 
