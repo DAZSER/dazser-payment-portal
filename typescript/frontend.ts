@@ -2,11 +2,13 @@
 import bodyParser from "body-parser";
 import Express from "express";
 import hbs from "express-handlebars";
+import favicon from "serve-favicon";
 import { join } from "path";
 import serverless from "serverless-http";
 import calculateFee from "./fee";
 
 const app = Express();
+app.use(favicon(join(__dirname, "public", "favicon.ico")));
 app.use(Express.static(join(__dirname, "public")));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
