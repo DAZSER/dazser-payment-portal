@@ -129,7 +129,7 @@ form.addEventListener("submit", ( event ) => {
   payButtonStateChanger(PayButtonState.SUBMITTING);
 
   // This function submits the data to Stripe, then deals with the token response
-  stripe.createToken(card).then( ({token, error}) =>{
+  stripe.createToken(card).then( ({token, error}) => {
     if (error) {
       payButtonStateChanger(PayButtonState.SUBMITTABLE);
     } else {

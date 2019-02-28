@@ -1,7 +1,7 @@
 // Backend
 import Big from "big.js";
 // @ts-ignore Stripe is exportable
-import {Stripe} from "stripe";
+import { Stripe } from "stripe";
 import Validator from "validator";
 import email from "./email";
 import calculateFee from "./fee";
@@ -11,9 +11,7 @@ interface IReturnData {
   message: string;
 }
 
-export const handler = async (event: AWSLambda.APIGatewayEvent, context: AWSLambda.Context) => {
-
-  console.log(context);
+export const handler = async (event: AWSLambda.APIGatewayEvent) => {
 
   // This is the return variable
   const data: IReturnData = {
