@@ -68,22 +68,7 @@ const stripeTokenHandler = ( token: any ) => {
 
     // Remove the form and the lead
     const lead = document.querySelector(".lead") as HTMLParagraphElement;
-    try {
-      try {
-        lead.remove();
-      } catch (err) {
-        try {
-          // @ts-ignore null error
-          lead.parentNode.removeChild(lead);
-        } finally {
-          // console.log()
-        }
-      } finally {
-        // console.log()
-      }
-    } finally {
-      // console.log()
-    }
+    lead.remove();
 
     // Remove all children in the form
     while (form.firstChild) {
