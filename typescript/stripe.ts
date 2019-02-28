@@ -1,6 +1,11 @@
 // Frontend
 import { StripeJS } from "stripejs";
 
+enum PayButtonState {
+  SUBMITTABLE = "submittable",
+  SUBMITTING = "submitting",
+}
+
 interface IData {
   [key: string]: any;
 }
@@ -85,10 +90,10 @@ const stripeTokenHandler = ( token: any ) => {
 };
 
 // This function will switch the submit button between submittable and submitting
-const payButtonStateChanger = ( state: string ) => {
+const payButtonStateChanger = ( state: PayButtonState ) => {
   const payButton = document.querySelector("#pay-button") as HTMLButtonElement;
 
-  if ( state === "submittable" ) {
+  if ( state === PayButtonState.SUBMITTABLE ) {
     // reset paybutton to defaults
     payButton.removeAttribute("disabled");
 
@@ -101,7 +106,7 @@ const payButtonStateChanger = ( state: string ) => {
     payButton.textContent = "Pay ";
     payButton.appendChild(amountSpan);
 
-  } else if ( state === "submitting" ) {
+  } else if ( state === PayButtonState.SUBMITTING ) {
     // change to disabled and spinner
     payButton.setAttribute("disabled", "disabled");
 
@@ -121,7 +126,7 @@ form.addEventListener("submit", ( event ) => {
   event.preventDefault();
 
   // Change the state of the pay button
-  payButtonStateChanger("submitting");
+  payButtonStateChanger(PayButtonState.SUBMITTING);
 
   stripe.createToken(card).then( (result) => {
     // This function submits the data to Stripe, then deals with the token response
