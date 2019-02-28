@@ -128,16 +128,16 @@ form.addEventListener("submit", ( event ) => {
   // Change the state of the pay button
   payButtonStateChanger(PayButtonState.SUBMITTING);
 
-  stripe.createToken(card).then( (result) => {
-    // This function submits the data to Stripe, then deals with the token response
-    const errorElement = document.querySelector("#form-errors") as HTMLDivElement;
-    if (result.error) {
-      payButtonStateChanger("submittable");
+  // This function submits the data to Stripe, then deals with the token response
+  stripe.createToken(card).then( ({token, error}) =>{
+    if (error) {
+      payButtonStateChanger(PayButtonState.SUBMITTABLE);
     } else {
       // Attach the token to the form and send it to my server
+      const errorElement = document.querySelector("#form-errors") as HTMLDivElement;
       errorElement.classList.add("d-none");
       // Deal with the form itself
-      stripeTokenHandler(result.token);
+      stripeTokenHandler(token);
     }
   });
 });
