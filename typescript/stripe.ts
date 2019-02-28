@@ -12,7 +12,7 @@ interface IData {
 
 // Create the Strip Card Element
 // https://stripe.com/docs/elements
-// @ts-ignore
+// @ts-ignore We've already added Stripe from the frontend.
 const stripe: StripeJS = new Stripe("{{stripe.publicKey}}");
 const elements = stripe.elements();
 const card = elements.create("card", {});
