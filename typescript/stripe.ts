@@ -14,10 +14,9 @@ const card = elements.create("card", {});
 card.mount("#card-element");
 
 const displayError = document.querySelector("#card-errors") as HTMLDivElement;
-// @ts-ignore card does have addEventListener
-card.addEventListener("change", ({error}: any) => {
-  if (error) {
-    displayError.textContent = error.message;
+card.on("change", (error) => {
+  if (error.error) {
+    displayError.textContent = error.error.message as string;
     displayError.classList.remove("d-none");
   } else {
     displayError.textContent = "";
