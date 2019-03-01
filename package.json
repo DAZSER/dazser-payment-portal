@@ -74,6 +74,7 @@
     "serve-favicon": "^2.5.0",
     "serverless-http": "^1.9.1",
     "stripe": "^6.25.1",
-    "validator": "^10.11.0"
+    "validator": "^10.11.0",
+    "weakmap-polyfill": "^2.0.0"
   }
 }
