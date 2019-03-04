@@ -3,7 +3,7 @@ service: dazser-payment-portal
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, "dev"}
   timeout: 30
   region: us-east-1
   environment:
@@ -28,7 +28,7 @@ custom:
     dev: dev-pay.dazser.com
   customDomain:
     domainName: ${self:custom.domains.${self:custom.stage}}
-    basePath: ''
+    basePath: ""
     stage: ${self:custom.stage}
     createRoute53Record: true
 
