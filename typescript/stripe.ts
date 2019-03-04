@@ -54,7 +54,7 @@ const stripeTokenHandler = ( token: any ) => {
 
   const xhr = new XMLHttpRequest();
   xhr.addEventListener("error", (event) => {
-    console.log(event);
+    console.error(event);
   });
 
   xhr.open(form.method, form.action);

@@ -17,7 +17,7 @@ app.engine("hbs", hbs());
 app.set("view engine", "hbs");
 
 app.get("/old", (_req: Express.Request, res: Express.Response) => {
-  console.log("oldies");
+  // This path is for outdated browsers
   res.status(200).render("old");
 });
 
@@ -108,8 +108,8 @@ app.get("*", (_req: Express.Request, res: Express.Response) => {
   res.status(404).send();
 });
 
-const SApp = serverless(app);
+const sApp = serverless(app);
 
 export const handler = async (event: AWSLambda.APIGatewayEvent, context: AWSLambda.Context): Promise<any> => {
-  return await SApp(event, context);
+  return await sApp(event, context);
 };

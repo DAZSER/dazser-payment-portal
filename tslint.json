@@ -4,6 +4,15 @@
         "tslint:recommended"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+      "no-console": [
+        true,
+        "log"
+      ],
+      "variable-name": [
+        true,
+        "allow-leading-underscore"
+      ]
+    },
     "rulesDirectory": []
 }
