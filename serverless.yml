@@ -6,6 +6,9 @@ provider:
   stage: ${opt:stage, 'dev'}
   timeout: 30
   region: us-east-1
+  environment:
+    ROLLBAR_KEY: ***REMOVED***
+    ANALYTICS_KEY: ***REMOVED***
   iamRoleStatements:
     - Effect: "Allow"
       Action:

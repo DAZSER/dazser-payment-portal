@@ -82,6 +82,9 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
   }
 
   const context = {
+    analytics: {
+      key: process.env.ANALYTICS_KEY as string,
+    },
     form: {
       amount,
       email,
@@ -89,6 +92,9 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
       invoice,
       regionNum,
       total,
+    },
+    rollbar: {
+      key: process.env.ROLLBAR_KEY as string,
     },
     stripe: {
       publicKey: stripePublicKey,
