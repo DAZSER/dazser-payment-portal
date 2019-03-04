@@ -16,6 +16,11 @@ app.use(bodyParser.json());
 app.engine("hbs", hbs());
 app.set("view engine", "hbs");
 
+app.get("/old", (_req: Express.Request, res: Express.Response) => {
+  console.log("oldies");
+  res.status(200).render("old");
+});
+
 app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
   // Verify the city
   const city = req.params.city;
@@ -63,7 +68,7 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
   if (req.params.info) {
     // We do have info, go ahead and set them up
     try {
-      const json = JSON.parse(Buffer.from(req.params.info, "base64").toString());
+      const json = JSON.parse(decodeURIComponent(Buffer.from(req.params.info, "base64").toString()));
       email = json.email;
       invoice = json.invoice;
       amount = json.amount;
@@ -72,7 +77,7 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
       total = totals.display.total;
     } catch {
       // Something is wrong with the info's encoding
-      console.error("bad params", req.params.info);
+      console.error("Bad Params", req.params.info);
     }
   }
 
