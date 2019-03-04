@@ -36,24 +36,24 @@ functions:
       - http: ANY /
       - http: ANY /{any+}
     environment:
-      STRIPE_ATLANTA_PUBLIC_KEY: "***REMOVED***"
-      STRIPE_BALTIMORE_PUBLIC_KEY: "***REMOVED***"
-      STRIPE_BIRMINGHAM_PUBLIC_KEY: "***REMOVED***"
-      STRIPE_ORLANDO_PUBLIC_KEY: "***REMOVED***"
-      STRIPE_TAMPA_PUBLIC_KEY: "***REMOVED***"
+      STRIPE_ATLANTA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/dazser}
+      STRIPE_BALTIMORE_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/baltimore}
+      STRIPE_BIRMINGHAM_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/birmingham}
+      STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
+      STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
   backend:
     handler: backend.handler
     environment:
-      STRIPE_ATLANTA_PRIVATE_KEY: "***REMOVED***"
-      STRIPE_BALTIMORE_PRIVATE_KEY: "***REMOVED***"
-      STRIPE_BIRMINGHAM_PRIVATE_KEY: "***REMOVED***"
-      STRIPE_ORLANDO_PRIVATE_KEY: "***REMOVED***"
-      STRIPE_TAMPA_PRIVATE_KEY: "***REMOVED***"
+      STRIPE_ATLANTA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/dazser~true}
+      STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore~true}
+      STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham~true}
+      STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando~true}
+      STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa~true}
       FROM_EMAIL: "alpha@dazser.com"
       TO_EMAIL: "network.admin@dazser.com"
-      MYSQL_HOST: "***REMOVED***"
-      MYSQL_USER: "stripe"
-      MYSQL_PASS: "***REMOVED***"
-      MYSQL_DBAS: "global"
+      MYSQL_HOST: ${ssm:/stripe/sql/host}
+      MYSQL_USER: ${ssm:/stripe/sql/user}
+      MYSQL_PASS: ${ssm:/stripe/sql/pass~true}
+      MYSQL_DBAS: ${ssm:/stripe/sql/schema}
     events:
       - http: ANY charge
