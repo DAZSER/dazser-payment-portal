@@ -7,8 +7,8 @@ provider:
   timeout: 30
   region: us-east-1
   environment:
-    ROLLBAR_KEY: ***REMOVED***
-    ANALYTICS_KEY: ***REMOVED***
+    ROLLBAR_KEY: ${ssm:/stripe/rollbar/key}
+    ANALYTICS_KEY: ${ssm:/stripe/analytics/key}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
