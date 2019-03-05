@@ -26,7 +26,8 @@
     "css-prefix": "postcss --config postcss.config.js --replace \"public/css/*.css\" \"!public/css/*.min.css\"",
     "css-minify": "cleancss --level 1 --output public/css/main.min.css public/css/main.css",
     "backend-compile": "tsc -p tsconfig.backend.json",
-    "deploy-dev": "sls deploy --stage dev -v"
+    "deploy-dev": "sls deploy --stage dev -v",
+    "deploy-prod": "sls deploy --stage prod -v"
   },
   "author": "",
   "license": "ISC",
