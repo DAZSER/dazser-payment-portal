@@ -2,7 +2,7 @@
   "extends": "./tsconfig",
   "compilerOptions": {
     /* Basic Options */
-    "target": "ES2017",
+    "target": "es2017",
     "outDir": "",
     "rootDir": "typescript",
   },
