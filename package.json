@@ -74,7 +74,7 @@
     "inputmask": "^4.0.6",
     "mysql": "^2.16.0",
     "serve-favicon": "^2.5.0",
-    "serverless-http": "^1.9.1",
+    "serverless-http": "^2.0.0",
     "stripe": "^6.25.1",
     "validator": "^10.11.0"
   }
