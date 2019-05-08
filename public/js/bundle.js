@@ -1068,7 +1068,7 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
 * https://github.com/RobinHerbots/Inputmask
 * Copyright (c) 2010 - 2019 Robin Herbots
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-* Version: 4.0.6
+* Version: 4.0.8
 */
 
 (function(factory) {
@@ -1127,7 +1127,7 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
         on: function(events, handler) {
             if (isValidElement(this[0])) {
                 var eventRegistry = this[0].eventRegistry, elem = this[0];
-                function addEvent(ev, namespace) {
+                var addEvent = function(ev, namespace) {
                     if (elem.addEventListener) {
                         elem.addEventListener(ev, handler, false);
                     } else if (elem.attachEvent) {
@@ -1136,7 +1136,7 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
                     eventRegistry[ev] = eventRegistry[ev] || {};
                     eventRegistry[ev][namespace] = eventRegistry[ev][namespace] || [];
                     eventRegistry[ev][namespace].push(handler);
-                }
+                };
                 var _events = events.split(" ");
                 for (var endx = 0; endx < _events.length; endx++) {
                     var nsEvent = _events[endx].split("."), ev = nsEvent[0], namespace = nsEvent[1] || "global";
@@ -1148,7 +1148,7 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
         off: function(events, handler) {
             if (isValidElement(this[0])) {
                 var eventRegistry = this[0].eventRegistry, elem = this[0];
-                function removeEvent(ev, namespace, handler) {
+                var removeEvent = function(ev, namespace, handler) {
                     if (ev in eventRegistry === true) {
                         if (elem.removeEventListener) {
                             elem.removeEventListener(ev, handler, false);
@@ -1163,8 +1163,8 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
                             eventRegistry[ev][namespace].splice(eventRegistry[ev][namespace].indexOf(handler), 1);
                         }
                     }
-                }
-                function resolveNamespace(ev, namespace) {
+                };
+                var resolveNamespace = function(ev, namespace) {
                     var evts = [], hndx, hndL;
                     if (ev.length > 0) {
                         if (handler === undefined) {
@@ -1206,7 +1206,7 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
                         }
                     }
                     return evts;
-                }
+                };
                 var _events = events.split(" ");
                 for (var endx = 0; endx < _events.length; endx++) {
                     var nsEvent = _events[endx].split("."), offEvents = resolveNamespace(nsEvent[0], nsEvent[1]);
@@ -1370,7 +1370,7 @@ W&&(X.prototype[W]="FormData");T&&(R.XMLHttpRequest.prototype.send=function(c){c
 * https://github.com/RobinHerbots/Inputmask
 * Copyright (c) 2010 - 2019 Robin Herbots
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-* Version: 4.0.6
+* Version: 4.0.8
 */
 
 if (typeof define === "function" && define.amd) define(function() {
@@ -1382,7 +1382,7 @@ if (typeof define === "function" && define.amd) define(function() {
 * https://github.com/RobinHerbots/Inputmask
 * Copyright (c) 2010 - 2019 Robin Herbots
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-* Version: 4.0.6
+* Version: 4.0.8
 */
 
 (function(factory) {
@@ -1635,7 +1635,7 @@ if (typeof define === "function" && define.amd) define(function() {
 * https://github.com/RobinHerbots/Inputmask
 * Copyright (c) 2010 - 2019 Robin Herbots
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-* Version: 4.0.6
+* Version: 4.0.8
 */
 
 (function(factory) {
@@ -1733,7 +1733,7 @@ if (typeof define === "function" && define.amd) define(function() {
 * https://github.com/RobinHerbots/Inputmask
 * Copyright (c) 2010 - 2019 Robin Herbots
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-* Version: 4.0.6
+* Version: 4.0.8
 */
 
 (function(factory) {
@@ -1848,7 +1848,7 @@ if (typeof define === "function" && define.amd) define(function() {
             function importAttributeOptions(npt, opts, userOptions, dataAttribute) {
                 if (opts.importDataAttributes === true) {
                     var attrOptions = npt.getAttribute(dataAttribute), option, dataoptions, optionData, p;
-                    function importOption(option, optionData) {
+                    var importOption = function(option, optionData) {
                         optionData = optionData !== undefined ? optionData : npt.getAttribute(dataAttribute + "-" + option);
                         if (optionData !== null) {
                             if (typeof optionData === "string") {
@@ -1856,7 +1856,7 @@ if (typeof define === "function" && define.amd) define(function() {
                             }
                             userOptions[option] = optionData;
                         }
-                    }
+                    };
                     if (attrOptions && attrOptions !== "") {
                         attrOptions = attrOptions.replace(/'/g, '"');
                         dataoptions = JSON.parse("{" + attrOptions + "}");
@@ -2238,13 +2238,13 @@ if (typeof define === "function" && define.amd) define(function() {
                     break;
 
                   case opts.alternatormarker:
-                    function groupQuantifier(matches) {
+                    var groupQuantifier = function(matches) {
                         var lastMatch = matches.pop();
                         if (lastMatch.isQuantifier) {
                             lastMatch = groupify([ matches.pop(), lastMatch ]);
                         }
                         return lastMatch;
-                    }
+                    };
                     if (openenings.length > 0) {
                         currentOpeningToken = openenings[openenings.length - 1];
                         var subToken = currentOpeningToken.matches[currentOpeningToken.matches.length - 1];
@@ -2292,6 +2292,9 @@ if (typeof define === "function" && define.amd) define(function() {
                 reverseTokens(maskTokens[0]);
             }
             return maskTokens;
+        },
+        positionColorMask: function(input, template) {
+            input.style.left = template.offsetLeft + "px";
         }
     };
     Inputmask.extendDefaults = function(options) {
@@ -2458,7 +2461,7 @@ if (typeof define === "function" && define.amd) define(function() {
         maskset = maskset || this.maskset;
         opts = opts || this.opts;
         var inputmask = this, el = this.el, isRTL = this.isRTL, undoValue, $el, skipKeyPressEvent = false, skipInputEvent = false, ignorable = false, maxLength, mouseEnter = false, colorMask, originalPlaceholder;
-        function getMaskTemplate(baseOnInput, minimalPos, includeMode, noJit, clearOptionalTail) {
+        var getMaskTemplate = function(baseOnInput, minimalPos, includeMode, noJit, clearOptionalTail) {
             var greedy = opts.greedy;
             if (clearOptionalTail) opts.greedy = false;
             minimalPos = minimalPos || 0;
@@ -2491,7 +2494,7 @@ if (typeof define === "function" && define.amd) define(function() {
             if (includeMode !== false || getMaskSet().maskLength === undefined) getMaskSet().maskLength = pos - 1;
             opts.greedy = greedy;
             return maskTemplate;
-        }
+        };
         function getMaskSet() {
             return maskset;
         }
@@ -3638,7 +3641,7 @@ if (typeof define === "function" && define.amd) define(function() {
                 this.inputmask.refreshValue = false;
                 var input = this, value = e && e.detail ? e.detail[0] : arguments[1], value = value || input.inputmask._valueGet(true);
                 if ($.isFunction(opts.onBeforeMask)) value = opts.onBeforeMask.call(inputmask, value, opts) || value;
-                value = value.split("");
+                value = value.toString().split("");
                 checkVal(input, true, false, value);
                 undoValue = getBuffer().join("");
                 if ((opts.clearMaskOnLostFocus || opts.clearIncomplete) && input.inputmask._valueGet() === getBufferTemplate().join("")) {
@@ -4103,9 +4106,6 @@ if (typeof define === "function" && define.amd) define(function() {
                 return EventHandlers.clickEvent.call(input, [ e ]);
             });
         }
-        Inputmask.prototype.positionColorMask = function(input, template) {
-            input.style.left = template.offsetLeft + "px";
-        };
         function renderColorMask(input, caretPos, clear) {
             var maskTemplate = [], isStatic = false, test, testPos, ndxIntlzr, pos = 0;
             function setEntry(entry) {
@@ -4479,7 +4479,7 @@ if (typeof define === "function" && define.amd) define(function() {
 * https://github.com/RobinHerbots/Inputmask
 * Copyright (c) 2010 - 2019 Robin Herbots
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-* Version: 4.0.6
+* Version: 4.0.8
 */
 
 (function(factory) {
