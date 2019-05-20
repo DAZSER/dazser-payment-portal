@@ -2,7 +2,7 @@ service: dazser-payment-portal
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   stage: ${opt:stage, "dev"}
   timeout: 30
   region: us-east-1
