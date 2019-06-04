@@ -13,8 +13,14 @@ app.use(Express.static(join(__dirname, "public")));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.engine("hbs", hbs());
+app.engine("hbs", hbs({
+  defaultLayout: 'main',
+  extname: '.hbs',
+  layoutsDir: join(__dirname, 'views', 'layouts'),
+  partialsDir: join(__dirname, 'views'),
+}));
 app.set("view engine", "hbs");
+app.set('views',join(__dirname, 'views'));
 
 app.get("/old", (_req: Express.Request, res: Express.Response) => {
   // This path is for outdated browsers
@@ -103,7 +109,7 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
       company: cityName,
     },
   };
-  res.status(200).render("index", context);
+  res.status(200).render("portal", context);
 });
 
 app.get("/", (_req: Express.Request, res: Express.Response) => {
