@@ -15,8 +15,14 @@ app.use(serve_favicon_1.default(path_1.join(__dirname, "public", "favicon.ico"))
 app.use(express_1.default.static(path_1.join(__dirname, "public")));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
-app.engine("hbs", express_handlebars_1.default());
+app.engine("hbs", express_handlebars_1.default({
+    defaultLayout: 'main',
+    extname: '.hbs',
+    layoutsDir: path_1.join(__dirname, 'views', 'layouts'),
+    partialsDir: path_1.join(__dirname, 'views'),
+}));
 app.set("view engine", "hbs");
+app.set('views', path_1.join(__dirname, 'views'));
 app.get("/old", (_req, res) => {
     res.status(200).render("old");
 });
@@ -96,7 +102,7 @@ app.get("/:city/:info?", (req, res) => {
             company: cityName,
         },
     };
-    res.status(200).render("index", context);
+    res.status(200).render("portal", context);
 });
 app.get("/", (_req, res) => {
     res.status(200).render("map");
