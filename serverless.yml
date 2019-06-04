@@ -37,7 +37,7 @@ functions:
     handler: frontend.handler
     events:
       - http: ANY /
-      - http: ANY /{proxy+}
+      - http: ANY /{any+}
     environment:
       STRIPE_ATLANTA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/dazser}
       STRIPE_BALTIMORE_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/baltimore}
