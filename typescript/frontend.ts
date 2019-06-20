@@ -14,13 +14,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.engine("hbs", hbs({
-  defaultLayout: 'main',
-  extname: '.hbs',
-  layoutsDir: join(__dirname, 'views', 'layouts'),
-  partialsDir: join(__dirname, 'views'),
+  defaultLayout: "main",
+  extname: ".hbs",
+  layoutsDir: join(__dirname, "views", "layouts"),
+  partialsDir: join(__dirname, "views"),
 }));
 app.set("view engine", "hbs");
-app.set('views',join(__dirname, 'views'));
+app.set("views", join(__dirname, "views"));
 
 app.get("/old", (_req: Express.Request, res: Express.Response) => {
   // This path is for outdated browsers
