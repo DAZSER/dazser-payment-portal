@@ -34,7 +34,7 @@ custom:
 
 functions:
   frontend:
-    handler: frontend.handler
+    handler: dist/frontend.handler
     events:
       - http: ANY /
       - http: ANY /{proxy+}
@@ -45,7 +45,7 @@ functions:
       STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
       STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
   backend:
-    handler: backend.handler
+    handler: dist/backend.handler
     environment:
       STRIPE_ATLANTA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/dazser~true}
       STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore~true}
