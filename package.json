@@ -6,7 +6,7 @@
   "scripts": {
     "test": "nyc mocha",
     "lint": "npm-run-all --parallel lint:js lint:css",
-    "lint:js": "tslint -c tslint.json 'typescript/*.ts'",
+    "lint:js": "eslint \"typescript/*.ts\"",
     "lint:css": "stylelint --config .stylelintrc --syntax scss \"scss/**/*.scss\"",
     "clean": "rm -rf .build/** public/js/** public/css/** public/images/** views/*.hbs views/**/*.hbs backend.js email.js fee.js frontend.js logger.js",
     "build": "npm-run-all --sequential clean --parallel img css js",
@@ -41,9 +41,14 @@
     "@types/validator": "^10.11.3",
     "autoprefixer": "^9.6.5",
     "aws-sdk": "^2.550.0",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
     "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "clean-css-cli": "^4.3.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "inline-source-cli": "^2.0.0",
     "mocha": "^6.2.1",
     "node-sass": "^4.12.0",
@@ -57,7 +62,6 @@
     "stylelint-config-standard": "^19.0.0",
     "stylelint-order": "^3.1.1",
     "stylelint-scss": "^3.11.1",
-    "tslint": "^5.20.0",
     "typescript": "^3.6.4"
   },
   "dependencies": {
