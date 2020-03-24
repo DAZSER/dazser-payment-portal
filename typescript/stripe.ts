@@ -6,13 +6,14 @@ enum PayButtonState {
   SUBMITTING = "submitting",
 }
 
-interface IData {
+interface Data {
   [key: string]: any;
 }
 
 // Create the Strip Card Element
 // https://stripe.com/docs/elements
-// @ts-ignore We've already added Stripe from the frontend.
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+//@ts-ignore Stripe() is already loaded
 const stripe: StripeJS = new Stripe("{{stripe.publicKey}}");
 const elements = stripe.elements();
 const card = elements.create("card", {});
@@ -33,7 +34,7 @@ card.on("change", (error) => {
 // createToken sends the CC info and returns a promise, this function is
 // called when the promise is fulfilled
 const form = document.querySelector("#payment-form") as HTMLFormElement;
-const stripeTokenHandler = ( token: any ) => {
+const stripeTokenHandler = (token: any): void => {
   // Add the token, then submit to my server
   // I will process the token with Stripe in order to charge the customer
   // Create the element
@@ -44,11 +45,11 @@ const stripeTokenHandler = ( token: any ) => {
   // And append it to the form!
   form.appendChild(hiddenInput);
 
-  const fd = new FormData( form );
+  const fd = new FormData(form);
 
-  const data: IData = {};
+  const data: Data = {};
 
-  fd.forEach( (value, key) => {
+  fd.forEach((value, key) => {
     data[key] = value;
   });
 
@@ -62,6 +63,7 @@ const stripeTokenHandler = ( token: any ) => {
   xhr.send(JSON.stringify(data));
 
   xhr.addEventListener("loadend", (response) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore There should be a response from the server by loadend
     const res = JSON.parse(response.target.response);
     const message = res.data.message;
@@ -90,10 +92,10 @@ const stripeTokenHandler = ( token: any ) => {
 };
 
 // This function will switch the submit button between submittable and submitting
-const payButtonStateChanger = ( state: PayButtonState ) => {
+const payButtonStateChanger = (state: PayButtonState): void => {
   const payButton = document.querySelector("#pay-button") as HTMLButtonElement;
 
-  if ( state === PayButtonState.SUBMITTABLE ) {
+  if (state === PayButtonState.SUBMITTABLE) {
     // reset paybutton to defaults
     payButton.removeAttribute("disabled");
 
@@ -105,8 +107,7 @@ const payButtonStateChanger = ( state: PayButtonState ) => {
 
     payButton.textContent = "Pay ";
     payButton.appendChild(amountSpan);
-
-  } else if ( state === PayButtonState.SUBMITTING ) {
+  } else if (state === PayButtonState.SUBMITTING) {
     // change to disabled and spinner
     payButton.setAttribute("disabled", "disabled");
 
@@ -122,19 +123,21 @@ const payButtonStateChanger = ( state: PayButtonState ) => {
 // Create the single use token by sending the CC information to Stripe
 // This will return a token that I can store on my DB server.
 // I can then use that token to charge the customer
-form.addEventListener("submit", ( event ) => {
+form.addEventListener("submit", (event) => {
   event.preventDefault();
 
   // Change the state of the pay button
   payButtonStateChanger(PayButtonState.SUBMITTING);
 
   // This function submits the data to Stripe, then deals with the token response
-  stripe.createToken(card).then( ({token, error}) => {
+  stripe.createToken(card).then(({ token, error }) => {
     if (error) {
       payButtonStateChanger(PayButtonState.SUBMITTABLE);
     } else {
       // Attach the token to the form and send it to my server
-      const errorElement = document.querySelector("#form-errors") as HTMLDivElement;
+      const errorElement = document.querySelector(
+        "#form-errors"
+      ) as HTMLDivElement;
       errorElement.classList.add("d-none");
       // Deal with the form itself
       stripeTokenHandler(token);

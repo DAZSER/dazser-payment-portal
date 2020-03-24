@@ -1,7 +1,7 @@
 // Frontend AND Backend
 import Big from "big.js";
 
-export interface IFeeStructure {
+export interface FeeStructure {
   amount: string;
   display: {
     amount: string;
@@ -12,12 +12,12 @@ export interface IFeeStructure {
   total: string;
 }
 
-export default function(initAmount: number): IFeeStructure {
+export default function (initAmount: number): FeeStructure {
   // This calculates the fee and total amount
   let amount = new Big(initAmount);
 
   // Edge Case: initAmount is 0
-  if ( amount.eq(0) ) {
+  if (amount.eq(0)) {
     return {
       amount: "0",
       display: {
@@ -47,9 +47,17 @@ export default function(initAmount: number): IFeeStructure {
     currency: "USD",
     style: "currency",
   };
-  const displayTotal = parseFloat(totalCharge.div(100).toString()).toLocaleString("en-US", options);
-  const displayFee = parseFloat(fee.div(100).toString()).toLocaleString("en-US", options);
-  const displayAmount = parseFloat(amount.div(100).toString()).toLocaleString("en-US", options);
+  const displayTotal = parseFloat(
+    totalCharge.div(100).toString()
+  ).toLocaleString("en-US", options);
+  const displayFee = parseFloat(fee.div(100).toString()).toLocaleString(
+    "en-US",
+    options
+  );
+  const displayAmount = parseFloat(amount.div(100).toString()).toLocaleString(
+    "en-US",
+    options
+  );
 
   return {
     amount: amount.toString(),

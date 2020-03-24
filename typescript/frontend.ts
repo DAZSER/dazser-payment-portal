@@ -10,15 +10,18 @@ import calculateFee from "./fee";
 const app = Express();
 app.use(favicon(join(__dirname, "public", "favicon.ico")));
 app.use(Express.static(join(__dirname, "public")));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.engine("hbs", hbs({
-  defaultLayout: "main",
-  extname: ".hbs",
-  layoutsDir: join(__dirname, "views", "layouts"),
-  partialsDir: join(__dirname, "views"),
-}));
+app.engine(
+  "hbs",
+  hbs({
+    defaultLayout: "main",
+    extname: ".hbs",
+    layoutsDir: join(__dirname, "views", "layouts"),
+    partialsDir: join(__dirname, "views"),
+  })
+);
 app.set("view engine", "hbs");
 app.set("views", join(__dirname, "views"));
 
@@ -74,7 +77,9 @@ app.get("/:city/:info?", (req: Express.Request, res: Express.Response) => {
   if (req.params.info) {
     // We do have info, go ahead and set them up
     try {
-      const json = JSON.parse(decodeURIComponent(Buffer.from(req.params.info, "base64").toString()));
+      const json = JSON.parse(
+        decodeURIComponent(Buffer.from(req.params.info, "base64").toString())
+      );
       email = json.email;
       invoice = json.invoice;
       amount = json.amount;
@@ -122,6 +127,9 @@ app.get("*", (_req: Express.Request, res: Express.Response) => {
 
 const sApp = serverless(app);
 
-export const handler = async (event: AWSLambda.APIGatewayEvent, context: AWSLambda.Context): Promise<any> => {
+export const handler = async (
+  event: AWSLambda.APIGatewayEvent,
+  context: AWSLambda.Context
+): Promise<AWSLambda.APIGatewayProxyResult> => {
   return await sApp(event, context);
 };
