@@ -1,3 +1,5 @@
+org: networkadmin
+app: dazser
 service: dazser-payment-portal
 
 provider:
@@ -34,7 +36,7 @@ custom:
 
 functions:
   frontend:
-    handler: dist/frontend.handler
+    handler: dist/backend/frontend.handler
     events:
       - http: ANY /
       - http: ANY /{proxy+}
@@ -45,7 +47,7 @@ functions:
       STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
       STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
   backend:
-    handler: dist/backend.handler
+    handler: dist/backend/backend.handler
     environment:
       STRIPE_ATLANTA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/dazser~true}
       STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore~true}
@@ -54,6 +56,7 @@ functions:
       STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa~true}
       FROM_EMAIL: "alpha@dazser.com"
       TO_EMAIL: "network.admin@dazser.com"
+      SQS_EMAIL_QUEUE: "https://sqs.us-east-1.amazonaws.com/863441837526/dazser-mailer-prod"
       MYSQL_HOST: ${ssm:/stripe/sql/host}
       MYSQL_USER: ${ssm:/stripe/sql/user}
       MYSQL_PASS: ${ssm:/stripe/sql/pass~true}
