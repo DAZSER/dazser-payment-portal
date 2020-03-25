@@ -1,0 +1,10 @@
+{
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "project": "./tsconfig.frontend.json",
+    "sourceType": "module"
+  }
+}

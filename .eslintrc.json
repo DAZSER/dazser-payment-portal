@@ -14,14 +14,6 @@
     "prettier/@typescript-eslint"
   ],
   "env": {
-    "browser": true,
-    "node": true,
     "mocha": true
-  },
-  "parserOptions": {
-    "ecmaVersion": 2019,
-    "project": "./tsconfig.backend.json",
-    "sourceType": "module"
-  },
-  "rules": {}
+  }
 }
