@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    /* Basic Options */
     "target": "es2019",
     "outDir": "dist",
     "rootDir": "typescript",
@@ -9,8 +8,6 @@
   "exclude": [
     "public",
     "node_modules",
-    "typescript/stripe.ts",
-    "typescript/ux.ts",
-    "typescript/app.ts"
+    "typescript/frontend"
   ]
 }
