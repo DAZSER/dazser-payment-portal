@@ -11,10 +11,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const big_js_1 = __importDefault(require("big.js"));
-const stripe_1 = require("stripe");
+const stripe_1 = __importDefault(require("stripe"));
 const validator_1 = __importDefault(require("validator"));
 const email_1 = __importDefault(require("./email"));
-const fee_1 = __importDefault(require("./fee"));
+const fee_1 = __importDefault(require("../fee"));
 const logger_1 = __importStar(require("./logger"));
 exports.handler = async (event) => {
     const data = {
@@ -24,7 +24,8 @@ exports.handler = async (event) => {
     form.stripeToken = JSON.parse(form.stripeToken);
     logger_1.default(logger_1.EventType.INSERT, form);
     if (!validator_1.default.isEmail(form.email)) {
-        data.message = "Invalid email address, please double check your email address and try again.";
+        data.message =
+            "Invalid email address, please double check your email address and try again.";
         return {
             body: JSON.stringify({ data }),
             statusCode: 422,
@@ -32,7 +33,8 @@ exports.handler = async (event) => {
     }
     const amount = big_js_1.default(parseFloat(form.amount.replace(/[^0-9.-]+/g, "")));
     if (amount.lt(0) || amount.gt(970999.69)) {
-        data.message = "Amount is invalid, please enter an amount greater than zero.";
+        data.message =
+            "Amount is invalid, please enter an amount greater than zero.";
         return {
             body: JSON.stringify({ data }),
             statusCode: 422,
@@ -49,8 +51,10 @@ exports.handler = async (event) => {
             form,
             frontEnd: whatWeToldThemItWouldBe.toString(),
         }));
-        data.message = "An unexpected error occured. You're card has not been charged. \
-    The error has been logged.\n Message ID: " + messageId;
+        data.message =
+            "An unexpected error occured. You're card has not been charged. \
+    The error has been logged.\n Message ID: " +
+                messageId;
         return {
             body: JSON.stringify({ data }),
             statusCode: 500,
@@ -83,13 +87,16 @@ exports.handler = async (event) => {
                 statusCode: 500,
             };
     }
-    const stripe = new stripe_1.Stripe(privateKey);
-    stripe.setTimeout(10000);
+    const stripe = new stripe_1.default(privateKey, {
+        apiVersion: "2020-03-02",
+    });
     try {
         const charge = await stripe.charges.create({
             amount: parseInt(chargedAmountInCents.toString(), 10),
             currency: "usd",
-            description: "Jani-King Cleaning Services - " + form.invoice + " - includes convenience fee",
+            description: "Jani-King Cleaning Services - " +
+                form.invoice +
+                " - includes convenience fee",
             metadata: {
                 email: form.email,
                 invoice: form.invoice,
@@ -97,11 +104,18 @@ exports.handler = async (event) => {
             receipt_email: form.email,
             source: form.stripeToken.id,
         });
-        await logger_1.default(logger_1.EventType.UPDATE, charge);
-        data.message = "Your account has been charged and a receipt has been emailed to you. \
+        try {
+            await logger_1.default(logger_1.EventType.UPDATE, charge);
+        }
+        catch (error) {
+            console.error(error);
+        }
+        data.message =
+            "Your account has been charged and a receipt has been emailed to you. \
     You may now close this window. \
     \n\n Thank you for your business! \
-    \n\n Transaction ID: " + charge.id;
+    \n\n Transaction ID: " +
+                charge.id;
         return {
             body: JSON.stringify({
                 data,
@@ -111,7 +125,11 @@ exports.handler = async (event) => {
     }
     catch (error) {
         await email_1.default(JSON.stringify({ error, form }));
-        data.message = "An unexpected error has occured.\n" + error.message + "\nCode: " + error.code;
+        data.message =
+            "An unexpected error has occured.\n" +
+                error.message +
+                "\nCode: " +
+                error.code;
         return {
             body: JSON.stringify({
                 data,

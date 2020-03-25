@@ -9,20 +9,20 @@ const express_handlebars_1 = __importDefault(require("express-handlebars"));
 const path_1 = require("path");
 const serve_favicon_1 = __importDefault(require("serve-favicon"));
 const serverless_http_1 = __importDefault(require("serverless-http"));
-const fee_1 = __importDefault(require("./fee"));
+const fee_1 = __importDefault(require("../fee"));
 const app = express_1.default();
-app.use(serve_favicon_1.default(path_1.join(__dirname, "public", "favicon.ico")));
-app.use(express_1.default.static(path_1.join(__dirname, "public")));
+app.use(serve_favicon_1.default(path_1.join(__dirname, "..", "..", "public", "favicon.ico")));
+app.use(express_1.default.static(path_1.join(__dirname, "..", "..", "public")));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
 app.engine("hbs", express_handlebars_1.default({
     defaultLayout: "main",
     extname: ".hbs",
-    layoutsDir: path_1.join(__dirname, "views", "layouts"),
-    partialsDir: path_1.join(__dirname, "views"),
+    layoutsDir: path_1.join(__dirname, "..", "..", "views", "layouts"),
+    partialsDir: path_1.join(__dirname, "..", "..", "views"),
 }));
 app.set("view engine", "hbs");
-app.set("views", path_1.join(__dirname, "views"));
+app.set("views", path_1.join(__dirname, "..", "..", "views"));
 app.get("/old", (_req, res) => {
     res.status(200).render("old");
 });
@@ -76,7 +76,7 @@ app.get("/:city/:info?", (req, res) => {
             fee = totals.display.fee;
             total = totals.display.total;
         }
-        catch (_a) {
+        catch {
             console.error("Bad Params", req.params.info);
         }
     }
