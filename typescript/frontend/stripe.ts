@@ -1,5 +1,5 @@
 // Frontend
-import { StripeJS } from "stripejs";
+import type { Stripe } from "@stripe/stripe-js";
 
 enum PayButtonState {
   SUBMITTABLE = "submittable",
@@ -13,8 +13,8 @@ interface Data {
 // Create the Strip Card Element
 // https://stripe.com/docs/elements
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-//@ts-ignore Stripe() is already loaded
-const stripe: StripeJS = new Stripe("{{stripe.publicKey}}");
+// @ts-ignore Stripe is already loaded
+const stripe: Stripe = new Stripe("{{stripe.publicKey}}");
 const elements = stripe.elements();
 const card = elements.create("card", {});
 card.mount("#card-element");

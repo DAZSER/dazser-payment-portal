@@ -1,9 +1,9 @@
 // Backend
 import Big from "big.js";
-import { Stripe } from "stripe";
+import Stripe from "stripe";
 import Validator from "validator";
 import email from "./email";
-import calculateFee from "./fee";
+import calculateFee from "../fee";
 import logger, { EventType } from "./logger";
 
 interface ReturnData {
@@ -108,10 +108,11 @@ export const handler = async (
       };
   }
 
-  const stripe = new Stripe(privateKey);
+  const stripe = new Stripe(privateKey, {
+    apiVersion: "2020-03-02",
+  });
 
   // GO AHEAD WITH THE CHARGE!!
-  stripe.setTimeout(10000);
   /*
   stripe.on("request", (e) => {console.log(e);});
   stripe.on("response", (e) => {console.log(e);});
@@ -137,8 +138,11 @@ export const handler = async (
     // The card has been charged successfully!
     // console.log(charge);
     // Now log the charge into our database (api call?)
-
-    await logger(EventType.UPDATE, charge);
+    try {
+      await logger(EventType.UPDATE, charge);
+    } catch (error) {
+      console.error(error);
+    }
 
     data.message =
       "Your account has been charged and a receipt has been emailed to you. \

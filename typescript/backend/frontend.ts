@@ -5,11 +5,11 @@ import hbs from "express-handlebars";
 import { join } from "path";
 import favicon from "serve-favicon";
 import serverless from "serverless-http";
-import calculateFee from "./fee";
+import calculateFee from "../fee";
 
 const app = Express();
-app.use(favicon(join(__dirname, "public", "favicon.ico")));
-app.use(Express.static(join(__dirname, "public")));
+app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
+app.use(Express.static(join(__dirname, "..", "..", "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -18,12 +18,12 @@ app.engine(
   hbs({
     defaultLayout: "main",
     extname: ".hbs",
-    layoutsDir: join(__dirname, "views", "layouts"),
-    partialsDir: join(__dirname, "views"),
+    layoutsDir: join(__dirname, "..", "..", "views", "layouts"),
+    partialsDir: join(__dirname, "..", "..", "views"),
   })
 );
 app.set("view engine", "hbs");
-app.set("views", join(__dirname, "views"));
+app.set("views", join(__dirname, "..", "..", "views"));
 
 app.get("/old", (_req: Express.Request, res: Express.Response) => {
   // This path is for outdated browsers

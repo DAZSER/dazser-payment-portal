@@ -1,6 +1,6 @@
 // Frontend
 import Inputmask from "inputmask";
-import calculateFee from "./fee";
+import calculateFee from "../fee";
 
 const amountInput = document.querySelector("#amount") as HTMLInputElement;
 // Bind the Input Mask
@@ -17,7 +17,7 @@ Inputmask({
 
 // Bind onchange for amount to updatePaymentAmount
 amountInput.addEventListener("keyup", () => {
-  if ( amountInput.value !== "") {
+  if (amountInput.value !== "") {
     const feeAmount = document.querySelector(
       "#convenience-fee"
     ) as HTMLInputElement;

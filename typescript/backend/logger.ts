@@ -7,7 +7,10 @@ export enum EventType {
 }
 
 // This function will log the mysql record
-export default async function (type: EventType, form: any) {
+export default async function (
+  type: EventType,
+  form: any
+): Promise<boolean | void> {
   const connection: mysql.Connection = mysql.createConnection({
     database: process.env.MYSQL_DBAS,
     host: process.env.MYSQL_HOST,
@@ -31,13 +34,13 @@ export default async function (type: EventType, form: any) {
         form.stripeToken.client_ip,
         form.stripeToken.created,
       ],
-      (error, results) => {
+      (error, _results) => {
         if (error) {
           connection.end();
-          return error;
+          return false;
         } else {
           connection.end();
-          return results;
+          return true;
         }
       }
     );
@@ -46,13 +49,13 @@ export default async function (type: EventType, form: any) {
     connection.query(
       "UPDATE `stripe_charges` SET `transaction_id`=?, `charged`=FROM_UNIXTIME(?) WHERE `id` = MAX(`id`)",
       [form.id, form.created],
-      (error, results) => {
+      (error, _results) => {
         if (error) {
           connection.end();
-          return error;
+          return false;
         } else {
           connection.end();
-          return results;
+          return true;
         }
       }
     );

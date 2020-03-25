@@ -1,8 +1,8 @@
 import "formdata-polyfill";
-import "./fee";
+import "../fee";
 import "./ux";
 
-// from:https://github.com/jserz/js_piece/blob/master/DOM/ChildNode/remove()/remove().md
+// from: https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
 // Polyfill for HTMLElement.remove()
 ((arr) => {
   arr.forEach((item) => {
