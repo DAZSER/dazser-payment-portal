@@ -26,7 +26,7 @@ amountInput.addEventListener("keyup", () => {
     ) as HTMLInputElement;
 
     const amounts = calculateFee(
-      parseFloat(amountInput.value.replace(/[^0-9.-]+/g, ""))
+      Number.parseFloat(amountInput.value.replace(/[^\d.-]+/g, ""))
     );
 
     totalAmount.value = amounts.display.total;

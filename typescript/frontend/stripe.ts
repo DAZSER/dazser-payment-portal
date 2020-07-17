@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Frontend
 import type { Stripe } from "@stripe/stripe-js";
 
@@ -12,7 +15,7 @@ interface Data {
 
 // Create the Strip Card Element
 // https://stripe.com/docs/elements
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore Stripe is already loaded
 const stripe: Stripe = new Stripe("{{stripe.publicKey}}");
 const elements = stripe.elements();
@@ -22,7 +25,7 @@ card.mount("#card-element");
 const displayError = document.querySelector("#card-errors") as HTMLDivElement;
 card.on("change", (error) => {
   if (error.error) {
-    displayError.textContent = error.error.message as string;
+    displayError.textContent = error.error.message;
     displayError.classList.remove("d-none");
   } else {
     displayError.textContent = "";
@@ -43,7 +46,7 @@ const stripeTokenHandler = (token: any): void => {
   hiddenInput.setAttribute("name", "stripeToken");
   hiddenInput.setAttribute("value", JSON.stringify(token));
   // And append it to the form!
-  form.appendChild(hiddenInput);
+  form.append(hiddenInput);
 
   const fd = new FormData(form);
 
@@ -63,15 +66,15 @@ const stripeTokenHandler = (token: any): void => {
   xhr.send(JSON.stringify(data));
 
   xhr.addEventListener("loadend", (response) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore There should be a response from the server by loadend
-    const res = JSON.parse(response.target.response);
-    const message = res.data.message;
+    const targetResponse = JSON.parse(response.target.response);
+    const { message } = targetResponse.data;
 
     // Create the result P element
     const result = document.createElement("p");
     result.classList.add("lead");
-    result.innerText = message;
+    result.textContent = message;
 
     // Remove the form and the lead
     const lead = document.querySelector(".lead") as HTMLParagraphElement;
@@ -79,11 +82,11 @@ const stripeTokenHandler = (token: any): void => {
 
     // Remove all children in the form
     while (form.firstChild) {
-      form.removeChild(form.firstChild);
+      form.firstChild.remove();
     }
 
     // Append the result child
-    form.appendChild(result);
+    form.append(result);
   });
 
   // Finally, submit the form!
@@ -106,7 +109,7 @@ const payButtonStateChanger = (state: PayButtonState): void => {
     amountSpan.setAttribute("id", "span-amount");
 
     payButton.textContent = "Pay ";
-    payButton.appendChild(amountSpan);
+    payButton.append(amountSpan);
   } else if (state === PayButtonState.SUBMITTING) {
     // change to disabled and spinner
     payButton.setAttribute("disabled", "disabled");
@@ -116,7 +119,7 @@ const payButtonStateChanger = (state: PayButtonState): void => {
     spinner.setAttribute("id", "spinner");
 
     payButton.textContent = "";
-    payButton.appendChild(spinner);
+    payButton.append(spinner);
   }
 };
 
@@ -130,17 +133,23 @@ form.addEventListener("submit", (event) => {
   payButtonStateChanger(PayButtonState.SUBMITTING);
 
   // This function submits the data to Stripe, then deals with the token response
-  stripe.createToken(card).then(({ token, error }) => {
-    if (error) {
-      payButtonStateChanger(PayButtonState.SUBMITTABLE);
-    } else {
-      // Attach the token to the form and send it to my server
-      const errorElement = document.querySelector(
-        "#form-errors"
-      ) as HTMLDivElement;
-      errorElement.classList.add("d-none");
-      // Deal with the form itself
-      stripeTokenHandler(token);
-    }
-  });
+  stripe
+    .createToken(card)
+    .then(({ token, error }) => {
+      // eslint-disable-next-line promise/always-return
+      if (error) {
+        payButtonStateChanger(PayButtonState.SUBMITTABLE);
+      } else {
+        // Attach the token to the form and send it to my server
+        const errorElement = document.querySelector(
+          "#form-errors"
+        ) as HTMLDivElement;
+        errorElement.classList.add("d-none");
+        // Deal with the form itself
+        stripeTokenHandler(token);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 });

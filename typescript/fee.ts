@@ -12,7 +12,7 @@ export interface FeeStructure {
   total: string;
 }
 
-export default function (initAmount: number): FeeStructure {
+export default (initAmount: number): FeeStructure => {
   // This calculates the fee and total amount
   let amount = new Big(initAmount);
 
@@ -47,17 +47,16 @@ export default function (initAmount: number): FeeStructure {
     currency: "USD",
     style: "currency",
   };
-  const displayTotal = parseFloat(
+  const displayTotal = Number.parseFloat(
     totalCharge.div(100).toString()
   ).toLocaleString("en-US", options);
-  const displayFee = parseFloat(fee.div(100).toString()).toLocaleString(
+  const displayFee = Number.parseFloat(fee.div(100).toString()).toLocaleString(
     "en-US",
     options
   );
-  const displayAmount = parseFloat(amount.div(100).toString()).toLocaleString(
-    "en-US",
-    options
-  );
+  const displayAmount = Number.parseFloat(
+    amount.div(100).toString()
+  ).toLocaleString("en-US", options);
 
   return {
     amount: amount.toString(),
@@ -69,4 +68,4 @@ export default function (initAmount: number): FeeStructure {
     fee: fee.toString(),
     total: totalCharge.toString(),
   };
-}
+};

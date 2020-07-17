@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Backend
 import mysql from "mysql";
 
@@ -7,10 +9,7 @@ export enum EventType {
 }
 
 // This function will log the mysql record
-export default async function (
-  type: EventType,
-  form: any
-): Promise<boolean | void> {
+export default async (type: EventType, form: any): Promise<boolean | void> => {
   const connection: mysql.Connection = mysql.createConnection({
     database: process.env.MYSQL_DBAS,
     host: process.env.MYSQL_HOST,
@@ -22,13 +21,12 @@ export default async function (
 
   if (type === EventType.INSERT) {
     connection.query(
-      "INSERT INTO `stripe_charges` (`email`,`invoice`, `invoice_amount`, `charged_amount`, \
-        `payment-brand`, `last4`,`client_ip`, `created`) VALUES (?,?,?,?,?,?,INET_ATON(?),FROM_UNIXTIME(?))",
+      "INSERT INTO `stripe_charges` (`email`,`invoice`, `invoice_amount`, `charged_amount`, `payment-brand`, `last4`,`client_ip`, `created`) VALUES (?,?,?,?,?,?,INET_ATON(?),FROM_UNIXTIME(?))",
       [
         form.email,
         form.invoice,
-        parseFloat(form.amount.replace(/[^0-9.-]+/g, "")) * 100,
-        parseFloat(form.total_amount.replace(/[^0-9.-]+/g, "")) * 100,
+        Number.parseFloat(form.amount.replace(/[^\d.-]+/g, "")) * 100,
+        Number.parseFloat(form.total_amount.replace(/[^\d.-]+/g, "")) * 100,
         form.stripeToken.card.brand,
         form.stripeToken.card.last4,
         form.stripeToken.client_ip,
@@ -38,10 +36,9 @@ export default async function (
         if (error) {
           connection.end();
           return false;
-        } else {
-          connection.end();
-          return true;
         }
+        connection.end();
+        return true;
       }
     );
   } else if (type === EventType.UPDATE) {
@@ -53,10 +50,9 @@ export default async function (
         if (error) {
           connection.end();
           return false;
-        } else {
-          connection.end();
-          return true;
         }
+        connection.end();
+        return true;
       }
     );
   }
