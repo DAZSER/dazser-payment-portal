@@ -10,32 +10,29 @@ var MergeType;
     MergeType["NOTIFY"] = "notify.html";
     MergeType["TEXT"] = "text.hbs";
 })(MergeType || (MergeType = {}));
-async function default_1(content) {
+exports.default = async (content) => {
     const email = {
-        to: process.env.TO_EMAIL,
-        subject: "Payment Portal Notification",
+        body: content,
         from: {
             address: process.env.FROM_EMAIL,
             name: "Stripe Notification",
         },
-        body: content,
-        phone: "",
-        company: "",
-        address_csz: "",
-        address_street: "",
+        regionnum: "1",
+        subject: "Payment Portal Notification",
         template: MergeType.NOTIFY,
+        to: process.env.TO_EMAIL,
     };
     const sqs = new sqs_1.default({ apiVersion: "2012-11-05" });
     const sqsPost = {
-        QueueUrl: process.env.SQS_EMAIL_QUEUE,
         MessageBody: JSON.stringify(email),
+        QueueUrl: process.env.SQS_EMAIL_QUEUE,
     };
     try {
         await sqs.sendMessage(sqsPost).promise();
         return true;
     }
-    catch {
+    catch (error) {
+        console.error(error);
         return false;
     }
-}
-exports.default = default_1;
+};

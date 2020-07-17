@@ -23,42 +23,37 @@ app.engine("hbs", express_handlebars_1.default({
 }));
 app.set("view engine", "hbs");
 app.set("views", path_1.join(__dirname, "..", "..", "views"));
-app.get("/old", (_req, res) => {
-    res.status(200).render("old");
+app.get("/old", (_request, response) => {
+    response.status(200).render("old");
 });
-app.get("/:city/:info?", (req, res) => {
-    const city = req.params.city;
+app.get("/:city/:info?", (request, response) => {
+    const { city } = request.params;
     let stripePublicKey;
     let cityName;
-    let regionNum;
+    let regionNumber;
     switch (city) {
-        case "atlanta":
-            stripePublicKey = process.env.STRIPE_ATLANTA_PUBLIC_KEY;
-            cityName = "Jani-King of Atlanta";
-            regionNum = "6";
-            break;
         case "baltimore":
             stripePublicKey = process.env.STRIPE_BALTIMORE_PUBLIC_KEY;
             cityName = "Jani-King of Baltimore";
-            regionNum = "4";
+            regionNumber = "4";
             break;
         case "birmingham":
             stripePublicKey = process.env.STRIPE_BIRMINGHAM_PUBLIC_KEY;
             cityName = "Jani-King of Birmingham";
-            regionNum = "3";
+            regionNumber = "3";
             break;
         case "orlando":
             stripePublicKey = process.env.STRIPE_ORLANDO_PUBLIC_KEY;
             cityName = "Jani-King of Orlando";
-            regionNum = "2";
+            regionNumber = "2";
             break;
         case "tampa":
             stripePublicKey = process.env.STRIPE_TAMPA_PUBLIC_KEY;
             cityName = "Jani-King of Tampa Bay";
-            regionNum = "1";
+            regionNumber = "1";
             break;
         default:
-            res.status(400).render("map");
+            response.status(400).render("map");
             return;
     }
     let email;
@@ -66,18 +61,21 @@ app.get("/:city/:info?", (req, res) => {
     let amount;
     let fee;
     let total;
-    if (req.params.info) {
+    if (request.params.info) {
         try {
-            const json = JSON.parse(decodeURIComponent(Buffer.from(req.params.info, "base64").toString()));
+            const json = JSON.parse(decodeURIComponent(Buffer.from(request.params.info, "base64").toString()));
             email = json.email;
             invoice = json.invoice;
             amount = json.amount;
-            const totals = fee_1.default(parseFloat(amount));
+            const totals = fee_1.default(Number.parseFloat(amount));
             fee = totals.display.fee;
             total = totals.display.total;
         }
-        catch {
-            console.error("Bad Params", req.params.info);
+        catch (error) {
+            console.error("Bad Params", {
+                error,
+                info: request.params.info,
+            });
         }
     }
     const context = {
@@ -89,7 +87,7 @@ app.get("/:city/:info?", (req, res) => {
             email,
             fee,
             invoice,
-            regionNum,
+            regionNum: regionNumber,
             total,
         },
         rollbar: {
@@ -102,15 +100,15 @@ app.get("/:city/:info?", (req, res) => {
             company: cityName,
         },
     };
-    res.status(200).render("portal", context);
+    response.status(200).render("portal", context);
 });
-app.get("/", (_req, res) => {
-    res.status(200).render("map");
+app.get("/", (_request, response) => {
+    response.status(200).render("map");
 });
-app.get("*", (_req, res) => {
-    res.status(404).send();
+app.get("*", (_request, response) => {
+    response.status(404).send();
 });
 const sApp = serverless_http_1.default(app);
-exports.handler = async (event, context) => {
-    return await sApp(event, context);
+exports.default = async (event, context) => {
+    return sApp(event, context);
 };

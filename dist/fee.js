@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const big_js_1 = __importDefault(require("big.js"));
-function default_1(initAmount) {
+exports.default = (initAmount) => {
     let amount = new big_js_1.default(initAmount);
     if (amount.eq(0)) {
         return {
@@ -28,9 +28,9 @@ function default_1(initAmount) {
         currency: "USD",
         style: "currency",
     };
-    const displayTotal = parseFloat(totalCharge.div(100).toString()).toLocaleString("en-US", options);
-    const displayFee = parseFloat(fee.div(100).toString()).toLocaleString("en-US", options);
-    const displayAmount = parseFloat(amount.div(100).toString()).toLocaleString("en-US", options);
+    const displayTotal = Number.parseFloat(totalCharge.div(100).toString()).toLocaleString("en-US", options);
+    const displayFee = Number.parseFloat(fee.div(100).toString()).toLocaleString("en-US", options);
+    const displayAmount = Number.parseFloat(amount.div(100).toString()).toLocaleString("en-US", options);
     return {
         amount: amount.toString(),
         display: {
@@ -41,5 +41,4 @@ function default_1(initAmount) {
         fee: fee.toString(),
         total: totalCharge.toString(),
     };
-}
-exports.default = default_1;
+};
