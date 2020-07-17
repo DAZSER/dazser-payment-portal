@@ -64,7 +64,7 @@ export default async (
 
   if (!chargedAmountInCents.eq(whatWeToldThemItWouldBe)) {
     // ERROR, The amount I calculated is not what I told them it would be!
-    const messageId = await email(
+    await email(
       JSON.stringify({
         backEnd: chargedAmountInCents.toString(),
         error:
@@ -73,7 +73,7 @@ export default async (
         frontEnd: whatWeToldThemItWouldBe.toString(),
       })
     );
-    data.message = `An unexpected error occured. You're card has not been charged. The error has been logged.\n Message ID: ${messageId}`;
+    data.message = `An unexpected error occured. You're card has not been charged. The error has been logged.`;
     return {
       body: JSON.stringify({ data }),
       statusCode: 500,

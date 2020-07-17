@@ -9,7 +9,7 @@ export enum EventType {
 }
 
 // This function will log the mysql record
-export default async (type: EventType, form: any): Promise<boolean | void> => {
+export default (type: EventType, form: any): boolean | void => {
   const connection: mysql.Connection = mysql.createConnection({
     database: process.env.MYSQL_DBAS,
     host: process.env.MYSQL_HOST,
@@ -56,4 +56,4 @@ export default async (type: EventType, form: any): Promise<boolean | void> => {
       }
     );
   }
-}
+};

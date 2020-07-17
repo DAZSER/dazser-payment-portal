@@ -56,6 +56,7 @@ export default async (content: string): Promise<boolean> => {
       address: process.env.FROM_EMAIL as string,
       name: "Stripe Notification",
     },
+    regionnum: "1",
     subject: "Payment Portal Notification",
     template: MergeType.NOTIFY,
     to: process.env.TO_EMAIL as string,
@@ -74,4 +75,4 @@ export default async (content: string): Promise<boolean> => {
     console.error(error);
     return false;
   }
-}
+};
