@@ -2,6 +2,7 @@
  * The CSS shown here will not be introduced in the Quickstart guide, but shows
  * how you can use CSS to style your Element's container.
  */
+/* stylelint-disable */
 .StripeElement {
   height: 40px;
   padding: 10px 12px;
@@ -20,6 +21,7 @@
   border-color: #fa755a;
 }
 
+/* stylelint-enable */
 .input-group-text {
   width: 9.5rem;
 }
