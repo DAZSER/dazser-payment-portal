@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import "formdata-polyfill";
-import "../fee";
+import "./fee";
 import "./ux";
 
 // from: https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
