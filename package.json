@@ -14,7 +14,7 @@
     "js:frontend": "npm-run-all --parallel compile:frontend compile:stripe --sequential compile:inline",
     "compile:frontend": "browserify \"typescript/frontend/app.ts\" -p [ tsify -p tsconfig.frontend.json ] > public/js/bundle.js",
     "compile:stripe": "tsc -p tsconfig.stripe.json",
-    "compile:inline": "inline-source --compress false html/portal.html views/portal.hbs && cp html/map.html views/map.hbs && cp html/old.html views/old.hbs && cp html/layouts/main.html views/layouts/main.hbs",
+    "compile:inline": "inline-source --compress false html/portal.html views/portal.hbs && cp html/map.html views/map.hbs && cp html/old.html views/old.hbs && cp html/layouts/main.html views/layouts/main.hbs && cp html/success.html views/success.hbs",
     "img": "cp images/jklogo-clear-SM2-fs8.png public/images/jklogo.png",
     "css": "npm-run-all --parallel compile:css --sequential css:prefix css:minify",
     "compile:css": "sass scss/main.scss public/css/main.css",
