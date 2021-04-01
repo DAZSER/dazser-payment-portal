@@ -1,4 +1,3 @@
-// Frontend AND Backend
 import Big from "big.js";
 
 export interface FeeStructure {
