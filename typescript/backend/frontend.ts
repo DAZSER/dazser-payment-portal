@@ -1,19 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Backend, lol (it serves the frontend)
-import bodyParser from "body-parser";
+// This is the server side renderer
+import { urlencoded, json } from "body-parser";
 import Express from "express";
 import hbs from "express-handlebars";
+// eslint-disable-next-line unicorn/import-style
 import { join } from "path";
 import favicon from "serve-favicon";
 import serverless from "serverless-http";
 import calculateFee from "../fee";
 
+interface InvoicePayload {
+  amount: string;
+  email: string;
+  invoice: string;
+}
+
 const app = Express();
 app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(Express.static(join(__dirname, "..", "..", "public")));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(urlencoded({ extended: false }));
+app.use(json());
 
 app.engine(
   "hbs",
@@ -36,7 +43,7 @@ app.get(
   "/:city/:info?",
   (request: Express.Request, response: Express.Response) => {
     // Verify the city
-    const { city } = request.params;
+    const { city, info } = request.params;
     let stripePublicKey: string;
     let cityName: string;
     let regionNumber: string;
@@ -73,14 +80,12 @@ app.get(
     let amount;
     let fee;
     let total;
-    if (request.params.info) {
+    if (info) {
       // We do have info, go ahead and set them up
       try {
         const json = JSON.parse(
-          decodeURIComponent(
-            Buffer.from(request.params.info, "base64").toString()
-          )
-        );
+          decodeURIComponent(Buffer.from(info, "base64").toString())
+        ) as InvoicePayload;
         email = json.email;
         invoice = json.invoice;
         amount = json.amount;
@@ -89,9 +94,11 @@ app.get(
         total = totals.display.total;
       } catch (error) {
         // Something is wrong with the info's encoding
+        // eslint-disable-next-line no-console
         console.error("Bad Params", {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           error,
-          info: request.params.info,
+          info,
         });
       }
     }
@@ -107,9 +114,6 @@ app.get(
         invoice,
         regionNum: regionNumber,
         total,
-      },
-      rollbar: {
-        key: process.env.ROLLBAR_KEY as string,
       },
       stripe: {
         publicKey: stripePublicKey,
@@ -136,5 +140,8 @@ export default async (
   event: AWSLambda.APIGatewayEvent,
   context: AWSLambda.Context
 ): Promise<AWSLambda.APIGatewayProxyResult> => {
-  return sApp(event, context);
+  return (await (sApp(
+    event,
+    context
+  ) as unknown)) as AWSLambda.APIGatewayProxyResult;
 };
