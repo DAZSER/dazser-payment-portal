@@ -45,19 +45,3 @@ functions:
       STRIPE_BIRMINGHAM_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/birmingham}
       STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
       STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
-  backend:
-    handler: dist/backend/backend.default
-    environment:
-      STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore~true}
-      STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham~true}
-      STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando~true}
-      STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa~true}
-      FROM_EMAIL: "alpha@dazser.com"
-      TO_EMAIL: "network.admin@dazser.com"
-      SQS_EMAIL_QUEUE: "https://sqs.us-east-1.amazonaws.com/863441837526/dazser-mailer-prod"
-      MYSQL_HOST: ${ssm:/stripe/sql/host}
-      MYSQL_USER: ${ssm:/stripe/sql/user}
-      MYSQL_PASS: ${ssm:/stripe/sql/pass~true}
-      MYSQL_DBAS: ${ssm:/stripe/sql/schema}
-    events:
-      - http: ANY charge
