@@ -71,10 +71,8 @@
     "express-handlebars": "^5.3.0",
     "formdata-polyfill": "^3.0.20",
     "inputmask": "^5.0.5",
-    "mysql": "^2.18.1",
     "serve-favicon": "^2.5.0",
     "serverless-http": "^2.7.0",
-    "stripe": "^8.141.0",
-    "validator": "^13.5.2"
+    "stripe": "^8.141.0"
   }
 }
