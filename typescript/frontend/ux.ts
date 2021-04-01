@@ -1,12 +1,10 @@
 // Frontend
 import Inputmask from "inputmask";
-import calculateFee from "../fee";
+import calculateFee from "./fee";
 
 const amountInput = document.querySelector("#amount") as HTMLInputElement;
 // Bind the Input Mask
-Inputmask({
-  alias: "numeric",
-  autoGroup: true,
+Inputmask("numeric", {
   clearMaskOnLostFocus: false,
   digits: "2",
   digitsOptional: false,
