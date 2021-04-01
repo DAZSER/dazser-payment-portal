@@ -36,7 +36,7 @@ custom:
 
 functions:
   frontend:
-    handler: dist/backend/frontend.default
+    handler: dist/backend/charge.default
     events:
       - http: ANY /
       - http: ANY /{proxy+}
@@ -46,3 +46,7 @@ functions:
       STRIPE_BIRMINGHAM_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/birmingham}
       STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
       STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
+      STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore}
+      STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham}
+      STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando}
+      STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa}
