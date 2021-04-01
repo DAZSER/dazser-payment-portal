@@ -1,5 +1,5 @@
 import "formdata-polyfill";
-import "./fee";
+import "../fee";
 import "./ux";
 
 // from: https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
