@@ -167,8 +167,10 @@ app.post(
             price_data: {
               currency: "usd",
               product_data: {
-                images: ["https://i.imgur.com/EHyR2nP.png"],
-                name: "Jani-King Services for Month/Year",
+                images: [
+                  "https://d3bog92s18hu5m.cloudfront.net/cleaned_badge.jpg",
+                ],
+                name: "Jani-King Janitorial Services",
               },
               unit_amount: Number.parseFloat(fee.total),
             },
