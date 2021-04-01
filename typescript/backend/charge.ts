@@ -135,7 +135,7 @@ app.post(
   (request: Express.Request, response: Express.Response) => {
     // This api endpoint will create the checkout session id
     const { city } = request.params;
-    const parsed = JSON.parse(request.body) as FrontEndForm;
+    const parsed = request.body as FrontEndForm;
     const privateKey = getStripePrivateKey(city);
     if (privateKey === "") {
       // The city is incorrect, idk what is wrong...
