@@ -130,6 +130,11 @@ app.get("/old", (_request: Express.Request, response: Express.Response) => {
   response.status(200).render("old");
 });
 
+app.get("/success", (_request: Express.Request, response: Express.Response) => {
+  // This path is for outdated browsers
+  response.status(200).render("success");
+});
+
 app.post(
   "/createCheckoutSession/:city",
   (request: Express.Request, response: Express.Response) => {
@@ -139,7 +144,7 @@ app.post(
     const privateKey = getStripePrivateKey(city);
     if (privateKey === "") {
       // The city is incorrect, idk what is wrong...
-      console.error("Invalide City");
+      console.error("Invalid City");
     }
 
     // Calculate the fee again based on the amount requested.
@@ -161,7 +166,8 @@ app.post(
     // eslint-disable-next-line promise/catch-or-return, @typescript-eslint/no-floating-promises
     stripe.checkout.sessions
       .create({
-        cancel_url: "https://www.google.com",
+        cancel_url: "https://dev-pay.dazser.com/",
+        customer_email: parsed.email,
         line_items: [
           {
             price_data: {
@@ -177,9 +183,12 @@ app.post(
             quantity: 1,
           },
         ],
+        metadata: {
+          invoice: parsed.invoice,
+        },
         mode: "payment",
         payment_method_types: ["card"],
-        success_url: "https://www.google.com",
+        success_url: "https://dev-pay.dazser.com/success",
       })
       // eslint-disable-next-line promise/always-return
       .then((session) => {
