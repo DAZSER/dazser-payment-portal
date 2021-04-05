@@ -1,6 +1,7 @@
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
 import { urlencoded, json } from "body-parser";
+import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
 import hbs from "express-handlebars";
