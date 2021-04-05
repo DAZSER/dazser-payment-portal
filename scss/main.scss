@@ -4,11 +4,12 @@
 }
 
 // Duplicate Stripe's disabled color
-.form-control:disabled, .form-control[readonly] {
-  background-color: rgba(26,26,26,.1);
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: rgba(26, 26, 26, .1);
 }
 
 .pay-container {
-  background-color: #fff;
   max-width: 33vw;
+  background-color: #fff;
 }
