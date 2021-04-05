@@ -10,7 +10,7 @@
     "lint": "npm-run-all --parallel lint:js lint:css",
     "lint:js": "eslint \"typescript/**/*.ts\"",
     "lint:css": "stylelint --syntax scss \"scss/**/*.scss\"",
-    "clean": "rm -rf .build/** public/js/** public/css/** public/images/** views/*.hbs views/**/*.hbs dist/**",
+    "clean": "rm -rf .build/** public/js/** public/css/** public/images/** views/*.hbs views/**/*.hbs dist/** && mkdir -p public/js public/css public/images views .build dist",
     "build": "npm-run-all --sequential clean --parallel img css js",
     "js": "npm-run-all --parallel js:frontend js:backend",
     "js:backend": "tsc -p tsconfig.backend.json",
