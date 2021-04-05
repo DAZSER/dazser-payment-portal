@@ -208,7 +208,7 @@ app.post(
               currency: "usd",
               product_data: {
                 images: [
-                  "https://d3bog92s18hu5m.cloudfront.net/cleaned_badge.jpg",
+                  "https://d3bog92s18hu5m.cloudfront.net/cleaned-badge.jpg",
                 ],
                 name: "Jani-King Janitorial Services",
               },
