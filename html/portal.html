@@ -48,18 +48,18 @@
         <small class="form-text text-muted mb-3">Please enter the invoice number(s) as written on your invoice(s). (#-######). You may also enter your Customer Name.</small>
 
         <div class="form-floating mb-3">
-          <input id="amount" name="amount" class="form-control" value="{{form.amount}}" required />
+          <input id="amount" name="amount" class="form-control text-end" value="{{form.amount}}" required />
           <label for="amount">Amount</label>
         </div>
 
         <div class="form-floating">
-          <input class="form-control no-select" id="convenience-fee" name="convenience_fee" value="{{form.fee}}" readonly tabindex="-1" />
+          <input class="form-control no-select text-end" id="convenience-fee" name="convenience_fee" value="{{form.fee}}" readonly tabindex="-1" />
           <label for="convenience_fee">Convenience Fee*</label>
         </div>
         <small class="form-text text-muted mb-3">* Our credit card processing service provider charges a Convenience Fee to process your payment.</small>
 
         <div class="form-floating mb-3">
-          <input class="form-control no-select" id="total-amount" name="total_amount" value="{{form.total}}" readonly tabindex="-1" />
+          <input class="form-control no-select text-end" id="total-amount" name="total_amount" value="{{form.total}}" readonly tabindex="-1" />
           <label for="total_amount">Total Charge</label>
         </div>
 
