@@ -33,7 +33,7 @@ const payButtonStateChanger = (state: PayButtonState): void => {
     // reset paybutton to defaults
     payButton.removeAttribute("disabled");
 
-    const spinner = document.querySelector("#spinner") as HTMLLIElement;
+    const spinner = document.querySelector("#spinner") as HTMLSpanElement;
     spinner.remove();
 
     const amountSpan = document.createElement("span");
@@ -45,8 +45,9 @@ const payButtonStateChanger = (state: PayButtonState): void => {
     // change to disabled and spinner
     payButton.setAttribute("disabled", "disabled");
 
-    const spinner = document.createElement("i");
-    spinner.setAttribute("class", "fa fa-spinner fa-spin fa-lg");
+    const spinner = document.createElement("span");
+    spinner.setAttribute("class", "spinner-border spinner-border-sm");
+    spinner.setAttribute("role", "status");
     spinner.setAttribute("id", "spinner");
 
     payButton.textContent = "";
