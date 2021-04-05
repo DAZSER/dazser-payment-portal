@@ -1,30 +1,11 @@
-/**
- * The CSS shown here will not be introduced in the Quickstart guide, but shows
- * how you can use CSS to style your Element's container.
- */
-/* stylelint-disable */
-.StripeElement {
-  height: 40px;
-  padding: 10px 12px;
-  background-color: #fff;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px 0 #e6ebf1;
-  transition: box-shadow 150ms ease;
-  &--focus {
-    box-shadow: 0 1px 3px 0 #cfd7df;
-  }
-  &--invalid {
-    border-color: #fa755a;
-  }
-  &--webkit-autofill {
-    // background-color: #fefde5 !important;
-  }
+.no-select {
+  pointer-events: none;
+  user-select: none;
 }
-/* stylelint-enable */
 
-.input-group-text {
-  width: 9.5rem;
+// Duplicate Stripe's disabled color
+.form-control:disabled, .form-control[readonly] {
+  background-color: rgba(26,26,26,.1);
 }
 
 .pay-container {
