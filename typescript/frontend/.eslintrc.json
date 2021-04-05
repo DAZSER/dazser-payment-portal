@@ -3,7 +3,7 @@
     "browser": true
   },
   "parserOptions": {
-    "ecmaVersion": 2019,
+    "ecmaVersion": 2020,
     "project": "./tsconfig.frontend.json",
     "sourceType": "module"
   }

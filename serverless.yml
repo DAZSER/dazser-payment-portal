@@ -1,30 +1,25 @@
-org: networkadmin
-app: dazser
 service: dazser-payment-portal
+
+variablesResolutionMode: 20210326
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
+  lambdaHashingVersion: "20201221"
+  apiGateway:
+    shouldStartNameWithService: true
+  logRetentionInDays: 30
   stage: ${opt:stage, "dev"}
   timeout: 30
   region: us-east-1
-  environment:
-    ROLLBAR_KEY: ${ssm:/stripe/rollbar/key}
-    ANALYTICS_KEY: ${ssm:/stripe/analytics/key}
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "ses:SendEmail"
-      Resource: "*"
 
 plugins:
   - serverless-domain-manager
+  - serverless-plugin-log-subscription
   - serverless-offline
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  stageVariables:
-      env: ${self:custom.stage}
   domains:
     prod: pay.dazser.com
     dev: dev-pay.dazser.com
@@ -33,31 +28,25 @@ custom:
     basePath: ""
     stage: ${self:custom.stage}
     createRoute53Record: true
+  logSubscription:
+    enabled: true
+    destinationArn: arn:aws:firehose:us-east-1:863441837526:deliverystream/KettleFirehose
+    roleArn: arn:aws:iam::863441837526:role/kettle-LoggingRole
+    filterPattern: -START -END
 
 functions:
   frontend:
-    handler: dist/backend/frontend.default
+    handler: dist/backend/charge.default
     events:
       - http: ANY /
       - http: ANY /{proxy+}
     environment:
+      ANALYTICS_KEY: ${ssm:/stripe/analytics/key}
       STRIPE_BALTIMORE_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/baltimore}
       STRIPE_BIRMINGHAM_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/birmingham}
       STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
       STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
-  backend:
-    handler: dist/backend/backend.default
-    environment:
-      STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore~true}
-      STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham~true}
-      STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando~true}
-      STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa~true}
-      FROM_EMAIL: "alpha@dazser.com"
-      TO_EMAIL: "network.admin@dazser.com"
-      SQS_EMAIL_QUEUE: "https://sqs.us-east-1.amazonaws.com/863441837526/dazser-mailer-prod"
-      MYSQL_HOST: ${ssm:/stripe/sql/host}
-      MYSQL_USER: ${ssm:/stripe/sql/user}
-      MYSQL_PASS: ${ssm:/stripe/sql/pass~true}
-      MYSQL_DBAS: ${ssm:/stripe/sql/schema}
-    events:
-      - http: ANY charge
+      STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore}
+      STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham}
+      STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando}
+      STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa}

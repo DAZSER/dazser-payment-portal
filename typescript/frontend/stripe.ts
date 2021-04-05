@@ -1,98 +1,29 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Frontend
-import type { Stripe } from "@stripe/stripe-js";
+import type {
+  RedirectToCheckoutOptions,
+  Stripe as StripeJS,
+  // eslint-disable-next-line node/no-unpublished-import
+} from "@stripe/stripe-js";
+import type { Stripe } from "stripe";
 
 enum PayButtonState {
   SUBMITTABLE = "submittable",
   SUBMITTING = "submitting",
 }
 
-interface Data {
+interface FrontEndForm {
   [key: string]: any;
+  amount?: string;
+  // eslint-disable-next-line camelcase
+  convenience_fee?: string;
+  email?: string;
+  invoice?: string;
+  regionName?: string;
+  // eslint-disable-next-line camelcase
+  region_num?: string;
+  // eslint-disable-next-line camelcase
+  total_amount?: string;
 }
-
-// Create the Strip Card Element
-// https://stripe.com/docs/elements
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore Stripe is already loaded
-const stripe: Stripe = new Stripe("{{stripe.publicKey}}");
-const elements = stripe.elements();
-const card = elements.create("card", {});
-card.mount("#card-element");
-
-const displayError = document.querySelector("#card-errors") as HTMLDivElement;
-card.on("change", (error) => {
-  if (error.error) {
-    displayError.textContent = error.error.message;
-    displayError.classList.remove("d-none");
-  } else {
-    displayError.textContent = "";
-    displayError.classList.add("d-none");
-  }
-});
-
-// This function is the Credit card response handler
-// createToken sends the CC info and returns a promise, this function is
-// called when the promise is fulfilled
-const form = document.querySelector("#payment-form") as HTMLFormElement;
-const stripeTokenHandler = (token: any): void => {
-  // Add the token, then submit to my server
-  // I will process the token with Stripe in order to charge the customer
-  // Create the element
-  const hiddenInput = document.createElement("input");
-  hiddenInput.setAttribute("type", "hidden");
-  hiddenInput.setAttribute("name", "stripeToken");
-  hiddenInput.setAttribute("value", JSON.stringify(token));
-  // And append it to the form!
-  form.append(hiddenInput);
-
-  const fd = new FormData(form);
-
-  const data: Data = {};
-
-  fd.forEach((value, key) => {
-    data[key] = value;
-  });
-
-  const xhr = new XMLHttpRequest();
-  xhr.addEventListener("error", (event) => {
-    console.error(event);
-  });
-
-  xhr.open(form.method, form.action);
-  // This sends the form to /charge
-  xhr.send(JSON.stringify(data));
-
-  xhr.addEventListener("loadend", (response) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore There should be a response from the server by loadend
-    const targetResponse = JSON.parse(response.target.response);
-    const { message } = targetResponse.data;
-
-    // Create the result P element
-    const result = document.createElement("p");
-    result.classList.add("lead");
-    result.textContent = message;
-
-    // Remove the form and the lead
-    const lead = document.querySelector(".lead") as HTMLParagraphElement;
-    lead.remove();
-
-    // Remove all children in the form
-    while (form.firstChild) {
-      form.firstChild.remove();
-    }
-
-    // Append the result child
-    form.append(result);
-  });
-
-  // Finally, submit the form!
-  // We are submitting via XHR, so I don't need to submit() the form
-  // form.submit();
-};
 
 // This function will switch the submit button between submittable and submitting
 const payButtonStateChanger = (state: PayButtonState): void => {
@@ -102,20 +33,21 @@ const payButtonStateChanger = (state: PayButtonState): void => {
     // reset paybutton to defaults
     payButton.removeAttribute("disabled");
 
-    const spinner = document.querySelector("#spinner") as HTMLElement;
+    const spinner = document.querySelector("#spinner") as HTMLSpanElement;
     spinner.remove();
 
     const amountSpan = document.createElement("span");
     amountSpan.setAttribute("id", "span-amount");
 
-    payButton.textContent = "Pay ";
+    payButton.textContent = "Continue to Pay ";
     payButton.append(amountSpan);
   } else if (state === PayButtonState.SUBMITTING) {
     // change to disabled and spinner
     payButton.setAttribute("disabled", "disabled");
 
-    const spinner = document.createElement("i");
-    spinner.setAttribute("class", "fa fa-spinner fa-spin fa-lg");
+    const spinner = document.createElement("span");
+    spinner.setAttribute("class", "spinner-border spinner-border-sm");
+    spinner.setAttribute("role", "status");
     spinner.setAttribute("id", "spinner");
 
     payButton.textContent = "";
@@ -123,33 +55,68 @@ const payButtonStateChanger = (state: PayButtonState): void => {
   }
 };
 
-// Create the single use token by sending the CC information to Stripe
-// This will return a token that I can store on my DB server.
-// I can then use that token to charge the customer
+// @ts-expect-error Stripe is ALREADY imported, just in Javascript on /html/layouts/main.html
+const stripe = Stripe("{{stripe.publicKey}}") as StripeJS;
+
+// Attach the Stripe Checkout to my Submit event,
+// this function will send the info to /createCheckoutSession
+// and it will return with a session id, and forward to Stripe Checkout
+// so they can enter payment information
+const form = document.querySelector("#payment-form") as HTMLFormElement;
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  // Change the state of the pay button
-  payButtonStateChanger(PayButtonState.SUBMITTING);
+  const fd = new FormData(form);
 
-  // This function submits the data to Stripe, then deals with the token response
-  stripe
-    .createToken(card)
-    .then(({ token, error }) => {
+  const data: FrontEndForm = {};
+
+  // eslint-disable-next-line unicorn/no-array-for-each
+  fd.forEach((value, key) => {
+    // eslint-disable-next-line security/detect-object-injection
+    data[key] = value;
+  });
+
+  const info = {
+    amount: data.amount,
+    email: data.email,
+    invoice: data.invoice,
+    totalAmount: data.total_amount,
+  };
+
+  const city = data.regionName;
+
+  fetch(`/createCheckoutSession/${city as string}`, {
+    body: JSON.stringify(info),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((session: Stripe.Checkout.Session) => {
+      return stripe.redirectToCheckout({
+        sessionId: session.id,
+      } as RedirectToCheckoutOptions);
+    })
+    .then((result) => {
+      // If redirectToCheckout fails due to a browser or network
+      // error, you should display the localized error message to your
+      // customer using error.message.
       // eslint-disable-next-line promise/always-return
-      if (error) {
+      if (result.error) {
+        // eslint-disable-next-line no-alert
+        alert(result.error.message);
         payButtonStateChanger(PayButtonState.SUBMITTABLE);
-      } else {
-        // Attach the token to the form and send it to my server
-        const errorElement = document.querySelector(
-          "#form-errors"
-        ) as HTMLDivElement;
-        errorElement.classList.add("d-none");
-        // Deal with the form itself
-        stripeTokenHandler(token);
       }
     })
     .catch((error) => {
-      console.error(error);
+      // eslint-disable-next-line no-console
+      console.error("Error:", error);
+      payButtonStateChanger(PayButtonState.SUBMITTABLE);
     });
+
+  // Change the state of the pay button
+  payButtonStateChanger(PayButtonState.SUBMITTING);
 });

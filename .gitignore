@@ -64,3 +64,7 @@ typings/
 *.min.*
 .build
 *.hbs
+dist
+public/js/bundle.js
+public/css/main.css.map
+public/css/main.css
