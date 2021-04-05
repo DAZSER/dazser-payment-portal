@@ -200,7 +200,7 @@ app.post(
     // eslint-disable-next-line promise/catch-or-return, @typescript-eslint/no-floating-promises
     stripe.checkout.sessions
       .create({
-        cancel_url: "https://dev-pay.dazser.com/",
+        cancel_url: "https://pay.dazser.com/",
         customer_email: parsed.email,
         line_items: [
           {
@@ -222,7 +222,7 @@ app.post(
         },
         mode: "payment",
         payment_method_types: ["card"],
-        success_url: "https://dev-pay.dazser.com/success",
+        success_url: "https://pay.dazser.com/success",
       })
       // eslint-disable-next-line promise/always-return
       .then((session) => {
