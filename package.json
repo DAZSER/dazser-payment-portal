@@ -3,6 +3,9 @@
   "version": "4.1.1",
   "description": "",
   "main": "index.html",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "lint": "npm-run-all --parallel lint:js lint:css",
     "lint:js": "eslint \"typescript/**/*.ts\"",
@@ -24,7 +27,7 @@
     "deploy:prod": "sls deploy --stage prod -v",
     "rollback:prod": "sls rollback --timestamp 1567777126311 --stage prod -v"
   },
-  "author": "",
+  "author": "Kyle McNally <kyle@dazser.com>",
   "license": "ISC",
   "devDependencies": {
     "@sparticuz/eslint-config": "^3.4.0",
@@ -70,9 +73,10 @@
     "express": "^4.17.1",
     "express-handlebars": "^5.3.0",
     "formdata-polyfill": "^3.0.20",
+    "helmet": "^4.4.1",
     "inputmask": "^5.0.5",
     "serve-favicon": "^2.5.0",
     "serverless-http": "^2.7.0",
-    "stripe": "^8.141.0"
+    "stripe": "^8.142.0"
   }
 }

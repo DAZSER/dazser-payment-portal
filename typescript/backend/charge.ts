@@ -1,8 +1,10 @@
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
 import { urlencoded, json } from "body-parser";
+import crypto from "crypto";
 import Express from "express";
 import hbs from "express-handlebars";
+import helmet from "helmet";
 // eslint-disable-next-line unicorn/import-style
 import { join } from "path";
 import favicon from "serve-favicon";
@@ -106,7 +108,38 @@ const parseInfo = (info: string): InvoicePayload => {
   }
 };
 
+// This defines the nonce used in the Script nonce tag for CSP purposes.
+const nonce = crypto.randomBytes(16).toString("hex");
+
 const app = Express();
+// Set up Helmet
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "connect-src": [
+          "'self'",
+          "https://google.com",
+          "https://www.google-analytics.com",
+          "https://stats.g.doubleclick.net",
+        ],
+        "frame-src": ["https://js.stripe.com"],
+        "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
+        "script-src-elem": [
+          "'self'",
+          "https://js.stripe.com",
+          "https://polyfill.io",
+          "https://www.google-analytics.com",
+          `'nonce-${nonce}'`,
+        ],
+        "style-src": ["'self'"],
+        "style-src-elem": ["'self'", "https://cdn.jsdelivr.net"],
+      },
+    },
+  })
+);
+app.use(compression());
 app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(Express.static(join(__dirname, "..", "..", "public")));
@@ -127,12 +160,12 @@ app.set("views", join(__dirname, "..", "..", "views"));
 
 app.get("/old", (_request: Express.Request, response: Express.Response) => {
   // This path is for outdated browsers
-  response.status(200).render("old");
+  response.status(200).render("old", { nonce });
 });
 
 app.get("/success", (_request: Express.Request, response: Express.Response) => {
   // This path is for outdated browsers
-  response.status(200).render("success");
+  response.status(200).render("success", { nonce });
 });
 
 app.post(
@@ -209,7 +242,7 @@ app.get(
 
     // If the city doesn't work, render the map
     if (cityName === "") {
-      response.status(400).render("map");
+      response.status(400).render("map", { nonce });
     }
 
     let parsed;
@@ -232,6 +265,7 @@ app.get(
         regionNum: regionNumber,
         total: fee?.display.total ?? "",
       },
+      nonce,
       stripe: {
         publicKey: stripePublicKey,
       },
@@ -244,7 +278,7 @@ app.get(
 );
 
 app.get("/", (_request: Express.Request, response: Express.Response) => {
-  response.status(200).render("map");
+  response.status(200).render("map", { nonce });
 });
 
 app.get("*", (_request: Express.Request, response: Express.Response) => {
