@@ -189,7 +189,7 @@ app.post(
     // Check to see if the fee we told them would be the fee calculated
     if (fee.total !== parsed.totalAmount) {
       // Something is wrong
-      console.error(parsed, fee);
+      console.error("THE PARSED AND CALCULATED FEE ARE DIFFERENT", parsed, fee);
     }
 
     const stripe = new Stripe(privateKey, {
@@ -201,6 +201,7 @@ app.post(
     stripe.checkout.sessions
       .create({
         cancel_url: "https://pay.dazser.com/",
+        client_reference_id: parsed.invoice,
         customer_email: parsed.email,
         line_items: [
           {
@@ -217,9 +218,6 @@ app.post(
             quantity: 1,
           },
         ],
-        metadata: {
-          invoice: parsed.invoice,
-        },
         mode: "payment",
         payment_method_types: ["card"],
         success_url: "https://pay.dazser.com/success",
