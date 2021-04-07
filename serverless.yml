@@ -12,6 +12,13 @@ provider:
   stage: ${opt:stage, "dev"}
   timeout: 30
   region: us-east-1
+  iam:
+    role:
+        statements:
+          - Effect: Allow
+            Action:
+              - sqs:SendMessage
+            Resource: arn:aws:sqs:us-east-1:863441837526:dazser-mailer-prod
 
 plugins:
   - serverless-domain-manager
@@ -23,6 +30,9 @@ custom:
   domains:
     prod: pay.dazser.com
     dev: dev-pay.dazser.com
+  stageName:
+    prod: production
+    dev: development
   customDomain:
     domainName: ${self:custom.domains.${self:custom.stage}}
     basePath: ""
@@ -35,13 +45,14 @@ custom:
     filterPattern: -START -END
 
 functions:
-  frontend:
+  charge:
     handler: dist/backend/charge.default
     events:
       - http: ANY /
       - http: ANY /{proxy+}
     environment:
       ANALYTICS_KEY: ${ssm:/stripe/analytics/key}
+      NODE_ENV: ${self:custom.stageName.${self:custom.stage}}
       STRIPE_BALTIMORE_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/baltimore}
       STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore}
       STRIPE_BALTIMORE_WEBHOOK_SIGNING_KEY: ${ssm:/stripe/${self:custom.stage}/webhook/baltimore}

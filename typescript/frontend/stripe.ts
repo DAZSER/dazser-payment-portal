@@ -96,6 +96,7 @@ form.addEventListener("submit", (event) => {
       return response.json();
     })
     .then((session: Stripe.Checkout.Session) => {
+      // This is the response from the createCheckoutSession
       return stripe.redirectToCheckout({
         sessionId: session.id,
       } as RedirectToCheckoutOptions);
