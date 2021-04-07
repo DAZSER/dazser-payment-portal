@@ -223,12 +223,12 @@ app.post(
       .then((success) => {
         // eslint-disable-next-line promise/always-return
         if (success) {
-          response.send(200);
+          response.sendStatus(200);
         }
       })
       .catch((error) => {
         console.error("Stripe Webhook Error", error);
-        response.send(500);
+        response.sendStatus(500);
       });
   }
 );
@@ -351,7 +351,7 @@ app.get("/", (_request: Express.Request, response: Express.Response) => {
 });
 
 app.get("*", (_request: Express.Request, response: Express.Response) => {
-  response.status(404).send();
+  response.sendStatus(404);
 });
 
 const sApp = serverless(app);
