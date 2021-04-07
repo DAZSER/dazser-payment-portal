@@ -35,6 +35,9 @@ interface ChargeSucceeded {
   client_reference_id: string;
   created: number;
   id: string;
+  metadata: {
+    invoice: string;
+  };
   // eslint-disable-next-line camelcase
   payment_method_details: {
     card: {
@@ -205,7 +208,7 @@ app.post(
       body = `<table style="width:100%;" border="1">
         <tr><td colspan="2">A charge has succeeded.</td></tr>
         <tr><td>Email</td><td>${charge.receipt_email}</td></tr>
-        <tr><td>Invoice</td><td>${charge.client_reference_id ?? ""}</td></tr>
+        <tr><td>Invoice</td><td>${charge.metadata.invoice}</td></tr>
         <tr><td>Amount</td><td>${amount.round(2).toString()}</td></tr>
         <tr><td>Charged on</td><td>${created.toLocaleDateString(
           "en-US"
@@ -293,6 +296,10 @@ app.post(
             quantity: 1,
           },
         ],
+        metadata: {
+          // eslint-disable-next-line prettier/prettier
+          "invoice": parsed.invoice,
+        },
         mode: "payment",
         payment_method_types: ["card"],
         success_url: "https://pay.dazser.com/success",
