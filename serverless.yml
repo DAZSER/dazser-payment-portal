@@ -50,3 +50,4 @@ functions:
       STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham}
       STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando}
       STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa}
+      SQS_QUEUE: https://sqs.us-east-1.amazonaws.com/863441837526/dazser-mailer-prod
