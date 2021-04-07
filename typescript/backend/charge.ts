@@ -1,6 +1,6 @@
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
-import { urlencoded, json, raw } from "body-parser";
+import { urlencoded, json } from "body-parser";
 import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
@@ -13,11 +13,7 @@ import serverless from "serverless-http";
 import Stripe from "stripe";
 import SQS from "aws-sdk/clients/sqs";
 import calculateFee from "../fee";
-import {
-  getStripePublicKey,
-  getStripePrivateKey,
-  getStripeWebhookSigningKey,
-} from "./get-stripe-keys";
+import { getStripePublicKey, getStripePrivateKey } from "./get-stripe-keys";
 
 interface InvoicePayload {
   amount: string;
@@ -184,16 +180,27 @@ app.get("/success", (_request: Express.Request, response: Express.Response) => {
 
 app.post(
   "/webhook/:city",
-  raw({ type: "application/json" }),
   (request: Express.Request, response: Express.Response) => {
     // This deals with the web hook from Stripe
-    const payload = request.body as string;
-    const signature = request.headers["stripe-signature"] ?? "";
+    const payload = request.body as Stripe.Event;
+    // const signature = request.headers["Stripe-Signature"];
+
+    // console.log("Request", JSON.stringify(request));
+    // console.log("Stripe Signature", request.headers["stripe-signature"]);
 
     // get region num
-    const key = getStripePrivateKey(request.params.city);
+    // const key = getStripePrivateKey(request.params.city);
 
-    const endpointSecret = getStripeWebhookSigningKey(request.params.city);
+    // const endpointSecret = getStripeWebhookSigningKey(request.params.city);
+
+    /* if (!endpointSecret && !signature) {
+      console.error(
+        "Missing Endpoint Secret or Stripe Signature",
+        endpointSecret,
+        signature
+      );
+      response.sendStatus(500);
+    }
 
     const stripe = new Stripe(key.stripePrivateKey, {
       apiVersion: "2020-08-27",
@@ -204,6 +211,7 @@ app.post(
     try {
       event = stripe.webhooks.constructEvent(
         payload,
+        // @ts-expect-error I already checked if signature exists
         signature,
         endpointSecret
       );
@@ -218,6 +226,13 @@ app.post(
 
     // @ts-expect-error Event exists
     const created = new Date(event.created * 1000);
+    */
+
+    const charge = payload.data.object as CheckoutSessionSucceededObject;
+
+    const created = new Date(payload.created * 1000);
+
+    const key = getStripePublicKey(request.params.city);
 
     const body = `<table style="width:100%;" border="1">
       <tr><td colspan="2">A Payment has succeeded.</td></tr>
