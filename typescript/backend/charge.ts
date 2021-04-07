@@ -14,17 +14,12 @@ import serverless from "serverless-http";
 import Stripe from "stripe";
 import SQS from "aws-sdk/clients/sqs";
 import calculateFee from "../fee";
+import { getStripePublicKey, getStripePrivateKey } from "./get-stripe-keys";
 
 interface InvoicePayload {
   amount: string;
   email: string;
   invoice: string;
-}
-
-interface stripeKey {
-  cityName: string;
-  regionNumber: string;
-  stripePublicKey: string;
 }
 
 interface FrontEndForm {
@@ -89,61 +84,6 @@ interface EmailPayload {
   template: "notify.html"; // This is the template to merge with
   to: string;
 }
-
-const getStripePrivateKey = (city: string): string => {
-  // Figure out the key
-  switch (city) {
-    /* istanbul ignore next */
-    case "tampa":
-      return process.env.STRIPE_TAMPA_PRIVATE_KEY as string;
-    /* istanbul ignore next */
-    case "orlando":
-      return process.env.STRIPE_ORLANDO_PRIVATE_KEY as string;
-    /* istanbul ignore next */
-    case "birmingham":
-      return process.env.STRIPE_BIRMINGHAM_PRIVATE_KEY as string;
-    /* istanbul ignore next */
-    case "baltimore":
-      return process.env.STRIPE_BALTIMORE_PRIVATE_KEY as string;
-    default:
-      return "";
-  }
-};
-
-const getStripePublicKey = (city: string): stripeKey => {
-  switch (city) {
-    case "baltimore":
-      return {
-        cityName: "Jani-King of Baltimore",
-        regionNumber: "4",
-        stripePublicKey: process.env.STRIPE_BALTIMORE_PUBLIC_KEY as string,
-      };
-    case "birmingham":
-      return {
-        cityName: "Jani-King of Birmingham",
-        regionNumber: "3",
-        stripePublicKey: process.env.STRIPE_BIRMINGHAM_PUBLIC_KEY as string,
-      };
-    case "orlando":
-      return {
-        cityName: "Jani-King of Orlando",
-        regionNumber: "2",
-        stripePublicKey: process.env.STRIPE_ORLANDO_PUBLIC_KEY as string,
-      };
-    case "tampa":
-      return {
-        cityName: "Jani-King of Tampa Bay",
-        regionNumber: "1",
-        stripePublicKey: process.env.STRIPE_TAMPA_PUBLIC_KEY as string,
-      };
-    default:
-      return {
-        cityName: "",
-        regionNumber: "",
-        stripePublicKey: "",
-      };
-  }
-};
 
 const parseInfo = (info: string): InvoicePayload => {
   // Now, setup any passed variables
