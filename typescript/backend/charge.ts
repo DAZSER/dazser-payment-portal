@@ -199,9 +199,9 @@ app.post(
       const charge = payload.data.object as ChargeSucceeded;
       const amount = new Big(charge.amount)
         .times(new Big(0.971))
-      const created = new Date(charge.created);
         .div(new Big(100))
         .minus(new Big(0.3));
+      const created = new Date(charge.created * 1000);
       body = `<table style="width:100%;" border="1">
         <tr><td colspan="2">A charge has succeeded.</td></tr>
         <tr><td>Email</td><td>${charge.receipt_email}</td></tr>
