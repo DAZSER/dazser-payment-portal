@@ -1,6 +1,6 @@
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
-import { urlencoded, json } from "body-parser";
+import { urlencoded, json, raw } from "body-parser";
 import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
@@ -13,7 +13,11 @@ import serverless from "serverless-http";
 import Stripe from "stripe";
 import SQS from "aws-sdk/clients/sqs";
 import calculateFee from "../fee";
-import { getStripePublicKey, getStripePrivateKey } from "./get-stripe-keys";
+import {
+  getStripePublicKey,
+  getStripePrivateKey,
+  getStripeWebhookSigningKey,
+} from "./get-stripe-keys";
 
 interface InvoicePayload {
   amount: string;
@@ -180,18 +184,40 @@ app.get("/success", (_request: Express.Request, response: Express.Response) => {
 
 app.post(
   "/webhook/:city",
+  raw({ type: "application/json" }),
   (request: Express.Request, response: Express.Response) => {
     // This deals with the web hook from Stripe
-    const payload = request.body as Stripe.Event;
-    const { city } = request.params;
+    const payload = request.body as string;
+    const signature = request.headers["stripe-signature"] ?? "";
 
     // get region num
-    const stripeKey = getStripePublicKey(city);
+    const key = getStripePrivateKey(request.params.city);
+
+    const endpointSecret = getStripeWebhookSigningKey(request.params.city);
+
+    const stripe = new Stripe(key.stripePrivateKey, {
+      apiVersion: "2020-08-27",
+      typescript: true,
+    });
+
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        payload,
+        signature,
+        endpointSecret
+      );
+    } catch (error) {
+      console.error("Webhook Error", error);
+      response.sendStatus(500);
+    }
 
     // Create a notify payload for sqs
-    const charge = payload.data.object as CheckoutSessionSucceededObject;
+    // @ts-expect-error Event exists
+    const charge = event.data.object as CheckoutSessionSucceededObject;
 
-    const created = new Date(payload.created * 1000);
+    // @ts-expect-error Event exists
+    const created = new Date(event.created * 1000);
 
     const body = `<table style="width:100%;" border="1">
       <tr><td colspan="2">A Payment has succeeded.</td></tr>
@@ -207,12 +233,10 @@ app.post(
       <tr><td>Payment Status</td><td>${charge.payment_status}</td></tr>
       </table>`;
 
-    console.log("node env", process.env.NODE_ENV);
-
     notify({
       body,
       from: { address: "network.admin@dazser.com", name: "Payment Portal" },
-      regionnum: stripeKey.regionNumber,
+      regionnum: key.regionNumber,
       subject: "Payment Notification",
       template: "notify.html",
       to:
@@ -239,8 +263,8 @@ app.post(
     // This api endpoint will create the checkout session id
     const { city } = request.params;
     const parsed = request.body as FrontEndForm;
-    const privateKey = getStripePrivateKey(city);
-    if (privateKey === "") {
+    const key = getStripePrivateKey(city);
+    if (key.stripePrivateKey === "") {
       // The city is incorrect, idk what is wrong...
       console.error("Invalid City");
     }
@@ -256,7 +280,7 @@ app.post(
       console.error("THE PARSED AND CALCULATED FEE ARE DIFFERENT", parsed, fee);
     }
 
-    const stripe = new Stripe(privateKey, {
+    const stripe = new Stripe(key.stripePrivateKey, {
       apiVersion: "2020-08-27",
       typescript: true,
     });

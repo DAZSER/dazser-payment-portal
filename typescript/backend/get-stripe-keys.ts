@@ -1,30 +1,50 @@
-export interface stripeKey {
+export interface stripePublicKey {
   cityName: string;
   regionNumber: string;
   stripePublicKey: string;
 }
 
-export const getStripePrivateKey = (city: string): string => {
+export interface stripePrivateKey {
+  regionNumber: string;
+  stripePrivateKey: string;
+}
+
+export const getStripePrivateKey = (city: string): stripePrivateKey => {
   // Figure out the key
   switch (city) {
     /* istanbul ignore next */
     case "tampa":
-      return process.env.STRIPE_TAMPA_PRIVATE_KEY as string;
+      return {
+        regionNumber: "1",
+        stripePrivateKey: process.env.STRIPE_TAMPA_PRIVATE_KEY as string,
+      };
     /* istanbul ignore next */
     case "orlando":
-      return process.env.STRIPE_ORLANDO_PRIVATE_KEY as string;
+      return {
+        regionNumber: "2",
+        stripePrivateKey: process.env.STRIPE_ORLANDO_PRIVATE_KEY as string,
+      };
     /* istanbul ignore next */
     case "birmingham":
-      return process.env.STRIPE_BIRMINGHAM_PRIVATE_KEY as string;
+      return {
+        regionNumber: "3",
+        stripePrivateKey: process.env.STRIPE_BIRMINGHAM_PRIVATE_KEY as string,
+      };
     /* istanbul ignore next */
     case "baltimore":
-      return process.env.STRIPE_BALTIMORE_PRIVATE_KEY as string;
+      return {
+        regionNumber: "4",
+        stripePrivateKey: process.env.STRIPE_BALTIMORE_PRIVATE_KEY as string,
+      };
     default:
-      return "";
+      return {
+        regionNumber: "",
+        stripePrivateKey: "",
+      };
   }
 };
 
-export const getStripePublicKey = (city: string): stripeKey => {
+export const getStripePublicKey = (city: string): stripePublicKey => {
   switch (city) {
     case "baltimore":
       return {
