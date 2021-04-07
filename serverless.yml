@@ -43,11 +43,15 @@ functions:
     environment:
       ANALYTICS_KEY: ${ssm:/stripe/analytics/key}
       STRIPE_BALTIMORE_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/baltimore}
-      STRIPE_BIRMINGHAM_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/birmingham}
-      STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
-      STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
       STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore}
+      STRIPE_BALTIMORE_WEBHOOK_SIGNING_KEY: ${ssm:/stripe/${self:custom.stage}/webhook/baltimore}
+      STRIPE_BIRMINGHAM_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/birmingham}
       STRIPE_BIRMINGHAM_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/birmingham}
+      STRIPE_BIRMINGHAM_WEBHOOK_SIGNING_KEY: ${ssm:/stripe/${self:custom.stage}/webhook/birmingham}
+      STRIPE_ORLANDO_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/orlando}
       STRIPE_ORLANDO_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/orlando}
+      STRIPE_ORLANDO_WEBHOOK_SIGNING_KEY: ${ssm:/stripe/${self:custom.stage}/webhook/orlando}
+      STRIPE_TAMPA_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/tampa}
       STRIPE_TAMPA_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/tampa}
+      STRIPE_TAMPA_WEBHOOK_SIGNING_KEY: ${ssm:/stripe/${self:custom.stage}/webhook/tampa}
       SQS_QUEUE: https://sqs.us-east-1.amazonaws.com/863441837526/dazser-mailer-prod

@@ -59,3 +59,22 @@ export const getStripePublicKey = (city: string): stripeKey => {
   }
 };
 
+export const getStripeWebhookSigningKey = (city: string): string => {
+  // Figure out the key
+  switch (city) {
+    /* istanbul ignore next */
+    case "tampa":
+      return process.env.STRIPE_TAMPA_WEBHOOK_KEY as string;
+    /* istanbul ignore next */
+    case "orlando":
+      return process.env.STRIPE_ORLANDO_WEBHOOK_KEY as string;
+    /* istanbul ignore next */
+    case "birmingham":
+      return process.env.STRIPE_BIRMINGHAM_WEBHOOK_KEY as string;
+    /* istanbul ignore next */
+    case "baltimore":
+      return process.env.STRIPE_BALTIMORE_WEBHOOK_KEY as string;
+    default:
+      return "";
+  }
+};
