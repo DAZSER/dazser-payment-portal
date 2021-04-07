@@ -1,6 +1,5 @@
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
-import Big from "big.js";
 import { urlencoded, json } from "body-parser";
 import compression from "compression";
 import crypto from "crypto";
@@ -29,29 +28,21 @@ interface FrontEndForm {
   totalAmount: string;
 }
 
-interface ChargeSucceeded {
-  amount: number;
+interface CheckoutSessionSucceededObject {
+  // eslint-disable-next-line camelcase
+  amount_total: number;
   // eslint-disable-next-line camelcase
   client_reference_id: string;
-  created: number;
-  id: string;
+  // eslint-disable-next-line camelcase
+  customer_email: string;
   metadata: {
-    invoice: string;
+    jkAmount: string;
+    jkInvoice: string;
   };
   // eslint-disable-next-line camelcase
-  payment_method_details: {
-    card: {
-      brand: string;
-      // eslint-disable-next-line camelcase
-      exp_month: number;
-      // eslint-disable-next-line camelcase
-      exp_year: number;
-      last4: string;
-    };
-  };
+  payment_intent: string;
   // eslint-disable-next-line camelcase
-  receipt_email: string;
-  status: string;
+  payment_status: string;
 }
 
 interface EmailPayload {
@@ -192,38 +183,31 @@ app.post(
   (request: Express.Request, response: Express.Response) => {
     // This deals with the web hook from Stripe
     const payload = request.body as Stripe.Event;
+    const { city } = request.params;
 
     // get region num
-    const stripeKey = getStripePublicKey(request.params.city);
+    const stripeKey = getStripePublicKey(city);
 
-    let body = "";
-    if (payload.type === "charge.succeeded") {
-      // Create a notify payload for sqs
-      const charge = payload.data.object as ChargeSucceeded;
-      const amount = new Big(charge.amount)
-        .times(new Big(0.971))
-        .div(new Big(100))
-        .minus(new Big(0.3));
-      const created = new Date(charge.created * 1000);
-      body = `<table style="width:100%;" border="1">
-        <tr><td colspan="2">A charge has succeeded.</td></tr>
-        <tr><td>Email</td><td>${charge.receipt_email}</td></tr>
-        <tr><td>Invoice</td><td>${charge.metadata.invoice}</td></tr>
-        <tr><td>Amount</td><td>${amount.round(2).toString()}</td></tr>
-        <tr><td>Charged on</td><td>${created.toLocaleDateString(
-          "en-US"
-        )}</td></tr>
-        <tr><td>Card Brand</td><td>${
-          charge.payment_method_details.card.brand
-        }</td></tr>
-        <tr><td>Card Expiration</td><td>${`${charge.payment_method_details.card.exp_month}/${charge.payment_method_details.card.exp_year}`}</td></tr>
-        <tr><td>Card Last Four</td><td>${
-          charge.payment_method_details.card.last4
-        }</td></tr>
-        <tr><td>Charge ID</td><td>${charge.id}</td></tr>
-        <tr><td>Charge Status</td><td>${charge.status}</td></tr>
-        </table>`;
-    }
+    // Create a notify payload for sqs
+    const charge = payload.data.object as CheckoutSessionSucceededObject;
+
+    const created = new Date(payload.created * 1000);
+
+    const body = `<table style="width:100%;" border="1">
+      <tr><td colspan="2">A Payment has succeeded.</td></tr>
+      <tr><td>Email</td><td>${charge.customer_email}</td></tr>
+      <tr><td>JK Invoice</td><td>${charge.metadata.jkInvoice}</td></tr>
+      <tr><td>JK Amount</td><td>${charge.metadata.jkAmount}</td></tr>
+      <tr><td>Payment on</td><td>${created.toLocaleDateString(
+        "en-US"
+      )}</td></tr>
+      <tr><td>Payment ID</td><td><a href='https://dashboard.stripe.com/payments/${
+        charge.payment_intent
+      }'>${charge.payment_intent}</a></td></tr>
+      <tr><td>Payment Status</td><td>${charge.payment_status}</td></tr>
+      </table>`;
+
+    console.log("node env", process.env.NODE_ENV);
 
     notify({
       body,
@@ -232,7 +216,9 @@ app.post(
       subject: "Payment Notification",
       template: "notify.html",
       to:
-        "sanderson@dazser.com, chiki.bodley@dazser.com, jade.dato@dazser.com, collections.assistant@dazser.com",
+        process.env.NODE_ENV === "production"
+          ? "sanderson@dazser.com, chiki.bodley@dazser.com, jade.dato@dazser.com, collections.assistant@dazser.com"
+          : "kyle@dazser.com",
     })
       .then((success) => {
         // eslint-disable-next-line promise/always-return
@@ -265,7 +251,7 @@ app.post(
     );
 
     // Check to see if the fee we told them would be the fee calculated
-    if (fee.total !== parsed.totalAmount) {
+    if (fee.display.total !== parsed.totalAmount) {
       // Something is wrong
       console.error("THE PARSED AND CALCULATED FEE ARE DIFFERENT", parsed, fee);
     }
@@ -298,7 +284,9 @@ app.post(
         ],
         metadata: {
           // eslint-disable-next-line prettier/prettier
-          "invoice": parsed.invoice,
+          "jkAmount": parsed.amount.replace(/[^\d.-]+/g, ""),
+          // eslint-disable-next-line prettier/prettier
+          "jkInvoice": parsed.invoice,
         },
         mode: "payment",
         payment_method_types: ["card"],
