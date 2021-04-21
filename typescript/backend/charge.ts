@@ -170,12 +170,12 @@ app.set("views", join(__dirname, "..", "..", "views"));
 
 app.get("/old", (_request: Express.Request, response: Express.Response) => {
   // This path is for outdated browsers
-  response.status(200).render("old", { nonce });
+  return response.status(200).render("old", { nonce });
 });
 
 app.get("/success", (_request: Express.Request, response: Express.Response) => {
   // This path is for outdated browsers
-  response.status(200).render("success", { nonce });
+  return response.status(200).render("success", { nonce });
 });
 
 app.post(
@@ -262,12 +262,14 @@ app.post(
       .then((success) => {
         // eslint-disable-next-line promise/always-return
         if (success) {
-          response.sendStatus(200);
+          return response.sendStatus(200);
         }
+        return response.sendStatus(500);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error("Stripe Webhook Error", error);
-        response.sendStatus(500);
+        return response.sendStatus(500);
       });
   }
 );
@@ -281,6 +283,7 @@ app.post(
     const key = getStripePrivateKey(city);
     if (key.stripePrivateKey === "") {
       // The city is incorrect, idk what is wrong...
+      // eslint-disable-next-line no-console
       console.error("Invalid City");
     }
 
@@ -292,6 +295,7 @@ app.post(
     // Check to see if the fee we told them would be the fee calculated
     if (fee.display.total !== parsed.totalAmount) {
       // Something is wrong
+      // eslint-disable-next-line no-console
       console.error("THE PARSED AND CALCULATED FEE ARE DIFFERENT", parsed, fee);
     }
 
@@ -333,7 +337,7 @@ app.post(
       })
       // eslint-disable-next-line promise/always-return
       .then((session) => {
-        response.json({ id: session.id });
+        return response.json({ id: session.id });
       });
   }
 );
@@ -350,7 +354,7 @@ app.get(
 
     // If the city doesn't work, render the map
     if (cityName === "") {
-      response.status(400).render("map", { nonce });
+      return response.status(400).render("map", { nonce });
     }
 
     let parsed;
@@ -381,16 +385,16 @@ app.get(
         company: cityName,
       },
     };
-    response.status(200).render("portal", context);
+    return response.status(200).render("portal", context);
   }
 );
 
 app.get("/", (_request: Express.Request, response: Express.Response) => {
-  response.status(200).render("map", { nonce });
+  return response.status(200).render("map", { nonce });
 });
 
 app.get("*", (_request: Express.Request, response: Express.Response) => {
-  response.sendStatus(404);
+  return response.sendStatus(404);
 });
 
 const sApp = serverless(app);
