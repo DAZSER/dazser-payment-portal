@@ -1,0 +1,21 @@
+name: Deploy to Prod
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  sls-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: npm ci
+      - name: Serverless AWS Authentication
+        run: npx sls config credentials --provider aws --key ${{ secrets.AWS_DEPLOY_KEY }} --secret ${{ secrets.AWS_SECRET_DEPLOY_KEY }}
+      - name: Build App
+        run: npm run build
+      - name: Serverless Deploy
+        run: npx sls deploy --stage prod -v
