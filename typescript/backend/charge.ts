@@ -348,9 +348,8 @@ app.get(
     // This api endpoint will return the server side rendered checkout page
     // Verify the city
     const { city, info } = request.params;
-    const { cityName, regionNumber, stripePublicKey } = getStripePublicKey(
-      city
-    );
+    const { cityName, regionNumber, stripePublicKey } =
+      getStripePublicKey(city);
 
     // If the city doesn't work, render the map
     if (cityName === "") {
