@@ -23,7 +23,6 @@ provider:
 plugins:
   - serverless-domain-manager
   - serverless-plugin-log-subscription
-  - serverless-offline
 
 custom:
   stage: ${opt:stage, self:provider.stage}
