@@ -360,7 +360,13 @@ app.get(
     let fee;
     if (info) {
       parsed = parseInfo(info);
-      fee = calculateFee(Number.parseFloat(parsed.amount));
+      try {
+        fee = calculateFee(Number.parseFloat(parsed.amount));
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error, `Info: ${info}`);
+        return response.status(400).render("map", { nonce });
+      }
     }
 
     const context = {
