@@ -11,7 +11,7 @@ import { join } from "path";
 import favicon from "serve-favicon";
 import serverless from "serverless-http";
 import Stripe from "stripe";
-import SQS from "aws-sdk/clients/sqs";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import calculateFee from "../fee";
 import { getStripePublicKey, getStripePrivateKey } from "./get-stripe-keys";
 
@@ -102,19 +102,19 @@ const parseInfo = (info: string): InvoicePayload => {
 };
 
 const notify = async (payload: EmailPayload): Promise<boolean> => {
-  const sqs = new SQS({
+  const sqs = new SQSClient({
     region: "us-east-1",
   });
   try {
-    await sqs
-      .sendMessage({
-        MessageBody: JSON.stringify(payload),
-        QueueUrl: process.env.SQS_QUEUE as string,
-      })
-      .promise();
+    const command = new SendMessageCommand({
+      MessageBody: JSON.stringify(payload),
+      QueueUrl: process.env.SQS_QUEUE as string,
+    });
+    await sqs.send(command);
     return true;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    return false;
   }
 };
 
