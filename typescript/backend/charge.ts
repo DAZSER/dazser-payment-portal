@@ -137,7 +137,7 @@ app.use(
         ],
         // eslint-disable-next-line sonarjs/no-duplicate-string
         "frame-src": ["https://js.stripe.com"],
-        "img-src": ["'self'", `'nonce-${nonce}'`],
+        "img-src": ["'self'", "'unsafe-inline'", `'nonce-${nonce}'`],
         "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
         "script-src": [
           "https://js.stripe.com",
