@@ -5,7 +5,7 @@ import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
 import hbs from "express-handlebars";
-import helmet from "helmet";
+// import helmet from "helmet";
 // eslint-disable-next-line unicorn/import-style
 import { join } from "path";
 import favicon from "serve-favicon";
@@ -122,6 +122,7 @@ const notify = async (payload: EmailPayload): Promise<boolean> => {
 const nonce = crypto.randomBytes(16).toString("hex");
 
 const app = Express();
+/*
 // Set up Helmet
 app.use(
   helmet({
@@ -157,6 +158,7 @@ app.use(
     },
   })
 );
+*/
 app.use(compression());
 app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
