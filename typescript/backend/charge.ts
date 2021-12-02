@@ -137,15 +137,22 @@ app.use(
         ],
         // eslint-disable-next-line sonarjs/no-duplicate-string
         "frame-src": ["https://js.stripe.com"],
-        "img-src": ["'self'", "data:", `'nonce-${nonce}'`],
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://www.google.com",
+          `'nonce-${nonce}'`,
+        ],
         "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
         "script-src": [
+          "'self'",
           "https://js.stripe.com",
           "https://polyfill.io",
           "https://www.google-analytics.com",
           `'nonce-${nonce}'`,
         ],
         "script-src-elem": [
+          "'self'",
           "https://js.stripe.com",
           "https://polyfill.io",
           "https://www.google-analytics.com",
