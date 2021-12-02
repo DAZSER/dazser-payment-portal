@@ -18,4 +18,4 @@ jobs:
       - name: Build App
         run: npm run build
       - name: Serverless Deploy
-        run: npx sls deploy --stage prod -v
+        run: npx sls deploy --stage prod --verbose
