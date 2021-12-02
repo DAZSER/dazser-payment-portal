@@ -134,8 +134,14 @@ app.use(
           "https://www.google-analytics.com",
           "https://stats.g.doubleclick.net",
         ],
+        // eslint-disable-next-line sonarjs/no-duplicate-string
         "frame-src": ["https://js.stripe.com"],
         "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
+        "script-src": [
+          "https://js.stripe.com",
+          "https://polyfill.io",
+          `'nonce-${nonce}'`,
+        ],
         "script-src-elem": [
           "'self'",
           "https://js.stripe.com",
