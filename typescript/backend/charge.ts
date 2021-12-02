@@ -138,19 +138,13 @@ app.use(
         "frame-src": ["https://js.stripe.com"],
         "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
         "script-src": [
-          "https://js.stripe.com",
-          "https://polyfill.io",
-          `'nonce-${nonce}'`,
-        ],
-        "script-src-elem": [
           "'self'",
           "https://js.stripe.com",
           "https://polyfill.io",
           "https://www.google-analytics.com",
           `'nonce-${nonce}'`,
         ],
-        "style-src": ["'self'"],
-        "style-src-elem": ["'self'", "https://cdn.jsdelivr.net"],
+        "style-src": ["'self'", "https://cdn.jsdelivr.net"],
       },
     },
   })
