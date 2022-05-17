@@ -1,6 +1,4 @@
-"use strict";
-
-module.exports = (ctx) => ({
+module.exports = () => ({
   plugins: {
     autoprefixer: {
       cascade: false,

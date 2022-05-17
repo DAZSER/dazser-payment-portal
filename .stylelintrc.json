@@ -2,6 +2,6 @@
   "extends": [
     "stylelint-config-standard",
     "stylelint-config-recommended-scss",
-    "stylelint-config-twbs-bootstrap/scss"
+    "stylelint-config-twbs-bootstrap"
   ]
 }
