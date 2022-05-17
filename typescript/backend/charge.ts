@@ -301,7 +301,6 @@ app.post(
           "jkInvoice": parsed.invoice,
         },
         mode: "payment",
-        payment_method_types: ["card"],
         success_url: "https://pay.dazser.com/success",
       })
       .then((session) => {
