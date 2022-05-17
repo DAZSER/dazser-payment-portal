@@ -26,8 +26,17 @@
     "deploy:dev": "sls deploy --stage dev -v",
     "deploy:prod": "sls deploy --stage prod -v",
     "rollback:prod": "sls rollback --timestamp 1595269437577 --stage prod -v"
+    "test": "ava"
   },
   "author": "Kyle McNally <kyle@dazser.com>",
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
   "license": "ISC",
   "devDependencies": {
     "@stripe/stripe-js": "^1.17.1",
@@ -45,6 +54,7 @@
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "autoprefixer": "^10.4.7",
+    "ava": "^4.2.0",
     "browserify": "^17.0.0",
     "clean-css-cli": "^5.6.0",
     "eslint": "^8.15.0",
