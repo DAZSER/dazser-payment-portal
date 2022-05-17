@@ -100,7 +100,7 @@ app.use(
           "'self'",
           "https://google.com",
           // eslint-disable-next-line sonarjs/no-duplicate-string
-          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
           "https://stats.g.doubleclick.net",
         ],
         // eslint-disable-next-line sonarjs/no-duplicate-string
@@ -116,14 +116,14 @@ app.use(
           "'self'",
           "https://js.stripe.com",
           "https://polyfill.io",
-          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
           `'nonce-${nonce}'`,
         ],
         "script-src-elem": [
           "'self'",
           "https://js.stripe.com",
           "https://polyfill.io",
-          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
           `'nonce-${nonce}'`,
         ],
         "style-src": ["'self'", "https://cdn.jsdelivr.net"],

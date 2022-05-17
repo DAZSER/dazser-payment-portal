@@ -25,6 +25,16 @@
   <!-- This is the Stripe JS file -->
   <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=fetch"></script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{analytics.key}}"></script>
+  <script nonce="{{nonce}}">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '{{analytics.key}}');
+  </script>
 </head>
 
 <body class="bg-light">
@@ -32,14 +42,5 @@
   {{{body}}}
 
 </body>
-
-<script nonce="{{nonce}}">
-  (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-  function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-  e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-  e.src="https://www.google-analytics.com/analytics.js";
-  r.parentNode.insertBefore(e,r)}(window,document,"script","ga"));
-  ga("create","{{analytics.key}}");ga("send","pageview");
-</script>
 
 </html>
