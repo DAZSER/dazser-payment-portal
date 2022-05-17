@@ -23,9 +23,9 @@
     "compile:css": "sass scss/main.scss public/css/main.css",
     "css:prefix": "postcss --config postcss.config.js --replace \"public/css/*.css\" \"!public/css/*.min.css\"",
     "css:minify": "cleancss -O1 --output public/css/main.min.css public/css/main.css",
-    "deploy:dev": "sls deploy --stage dev -v",
-    "deploy:prod": "sls deploy --stage prod -v",
-    "rollback:prod": "sls rollback --timestamp 1595269437577 --stage prod -v"
+    "deploy:dev": "sls deploy --stage dev --verbose",
+    "deploy:prod": "sls deploy --stage prod --verbose",
+    "rollback:prod": "sls rollback --timestamp 1595269437577 --stage prod --verbose",
     "test": "ava"
   },
   "author": "Kyle McNally <kyle@dazser.com>",
@@ -63,11 +63,11 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "sass": "^1.39.0",
-    "serverless": "^2.57.0",
-    "serverless-domain-manager": "^5.1.5",
-    "serverless-plugin-log-subscription": "^2.0.1",
     "postcss": "^8.4.13",
     "postcss-cli": "^9.1.0",
+    "serverless": "^3.17.0",
+    "serverless-domain-manager": "^6.0.3",
+    "serverless-plugin-log-subscription": "^2.1.2",
     "stylelint": "^14.8.2",
     "stylelint-config-recommended-scss": "^6.0.0",
     "stylelint-config-standard": "^25.0.0",
@@ -88,7 +88,7 @@
     "helmet": "^4.6.0",
     "inputmask": "^5.0.6",
     "serve-favicon": "^2.5.0",
-    "serverless-http": "^2.7.0",
     "stripe": "^8.174.0"
+    "serverless-http": "^3.0.1",
   }
 }
