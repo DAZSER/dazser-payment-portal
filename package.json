@@ -83,10 +83,10 @@
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "express": "^4.17.1",
-    "express-handlebars": "^5.3.3",
     "formdata-polyfill": "^4.0.7",
     "helmet": "^4.6.0",
     "inputmask": "^5.0.6",
+    "express-handlebars": "^6.0.6",
     "serve-favicon": "^2.5.0",
     "stripe": "^8.174.0"
     "serverless-http": "^3.0.1",

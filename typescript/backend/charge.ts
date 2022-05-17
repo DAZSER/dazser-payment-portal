@@ -4,7 +4,7 @@ import { urlencoded, json } from "body-parser";
 import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
-import hbs from "express-handlebars";
+import { create } from "express-handlebars";
 import helmet from "helmet";
 // eslint-disable-next-line unicorn/import-style
 import { join } from "path";
@@ -31,19 +31,14 @@ interface FrontEndForm {
 }
 
 interface CheckoutSessionSucceededObject {
-  // eslint-disable-next-line camelcase
   amount_total: number;
-  // eslint-disable-next-line camelcase
   client_reference_id: string;
-  // eslint-disable-next-line camelcase
   customer_email: string;
   metadata: {
     jkAmount: string;
     jkInvoice: string;
   };
-  // eslint-disable-next-line camelcase
   payment_intent: string;
-  // eslint-disable-next-line camelcase
   payment_status: string;
 }
 
@@ -55,9 +50,7 @@ const parseInfo = (info: string): InvoicePayload => {
     ) as InvoicePayload;
   } catch (error) {
     // Something is wrong with the info's encoding
-    // eslint-disable-next-line no-console
     console.error("Bad Params", {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       error,
       info,
     });
@@ -134,20 +127,16 @@ app.use(
 );
 app.use(compression());
 app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(Express.static(join(__dirname, "..", "..", "public")));
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
-app.engine(
-  "hbs",
-  hbs({
-    defaultLayout: "main",
-    extname: ".hbs",
-    layoutsDir: join(__dirname, "..", "..", "views", "layouts"),
-    partialsDir: join(__dirname, "..", "..", "views"),
-  })
-);
+const hbs = create({
+  extname: ".hbs",
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
 app.set("views", join(__dirname, "..", "..", "views"));
 
@@ -236,6 +225,7 @@ app.post(
       from: { address: "network.admin@dazser.com", name: "Payment Portal" },
       regionnum: key.regionNumber,
       subject: "Payment Notification",
+      // @ts-expect-error I know it's an enum, but I'm using as a string
       template: "notify.html",
       to:
         process.env.NODE_ENV === "production"
@@ -243,14 +233,12 @@ app.post(
           : "kyle@dazser.com",
     })
       .then((success) => {
-        // eslint-disable-next-line promise/always-return
         if (success) {
           return response.sendStatus(200);
         }
         return response.sendStatus(500);
       })
       .catch((error) => {
-        // eslint-disable-next-line no-console
         console.error("Stripe Webhook Error", error);
         return response.sendStatus(500);
       });
@@ -266,7 +254,6 @@ app.post(
     const key = getStripePrivateKey(city);
     if (key.stripePrivateKey === "") {
       // The city is incorrect, idk what is wrong...
-      // eslint-disable-next-line no-console
       console.error("Invalid City");
     }
 
@@ -278,7 +265,6 @@ app.post(
     // Check to see if the fee we told them would be the fee calculated
     if (fee.display.total !== parsed.totalAmount) {
       // Something is wrong
-      // eslint-disable-next-line no-console
       console.error("THE PARSED AND CALCULATED FEE ARE DIFFERENT", parsed, fee);
     }
 
@@ -318,7 +304,6 @@ app.post(
         payment_method_types: ["card"],
         success_url: "https://pay.dazser.com/success",
       })
-      // eslint-disable-next-line promise/always-return
       .then((session) => {
         return response.json({ id: session.id });
       });
@@ -346,7 +331,6 @@ app.get(
       try {
         fee = calculateFee(Number.parseFloat(parsed.amount));
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error, `Info: ${info}`);
         return response.status(400).render("map", { nonce });
       }
