@@ -12,6 +12,8 @@ import favicon from "serve-favicon";
 import serverless from "serverless-http";
 import Stripe from "stripe";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+// eslint-disable-next-line node/no-unpublished-import
+import type { EmailPayload } from "@dazser/mailer/dist/merge";
 import calculateFee from "../fee";
 import { getStripePublicKey, getStripePrivateKey } from "./get-stripe-keys";
 
@@ -43,40 +45,6 @@ interface CheckoutSessionSucceededObject {
   payment_intent: string;
   // eslint-disable-next-line camelcase
   payment_status: string;
-}
-
-interface EmailPayload {
-  attachments?: string; // This is a path to S3 for the attachment
-  bcc?: string | string[];
-  body: string; // This is the inner body of the message
-  calendar?: string; // This is an iCal string
-  cc?: string | string[];
-  dsn?: boolean;
-  from: {
-    address: string;
-    name?: string;
-  };
-  invoice?: {
-    file: {
-      // This is the S3 Invoice PDF
-      content: Buffer;
-      filename: string;
-    };
-    info: string;
-    invoice: string;
-  };
-  performance?: {
-    // This is only included in the Performance Payload
-    custName: string;
-    header: string;
-    serviceAddress: string;
-    unique: string;
-  };
-  preview?: string;
-  regionnum: string; // This gives me the regionnum so I can get regionInfo
-  subject: string;
-  template: "notify.html"; // This is the template to merge with
-  to: string;
 }
 
 const parseInfo = (info: string): InvoicePayload => {
