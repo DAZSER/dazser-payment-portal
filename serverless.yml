@@ -1,11 +1,8 @@
 service: dazser-payment-portal
 
-variablesResolutionMode: 20210326
-
 provider:
   name: aws
-  runtime: nodejs14.x
-  lambdaHashingVersion: "20201221"
+  runtime: nodejs16.x
   apiGateway:
     shouldStartNameWithService: true
   logRetentionInDays: 30
@@ -50,7 +47,7 @@ functions:
       - http: ANY /
       - http: ANY /{proxy+}
     environment:
-      ANALYTICS_KEY: ${ssm:/stripe/analytics/key}
+      ANALYTICS_KEY: G-N2J0ZJY6HK
       NODE_ENV: ${self:custom.stageName.${self:custom.stage}}
       STRIPE_BALTIMORE_PUBLIC_KEY: ${ssm:/stripe/${self:custom.stage}/public/baltimore}
       STRIPE_BALTIMORE_PRIVATE_KEY: ${ssm:/stripe/${self:custom.stage}/private/baltimore}
