@@ -23,11 +23,11 @@
   </script>
 
   <!-- This is the Stripe JS file -->
-  <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=fetch"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v3/" crossorigin="anonymous"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=fetch" crossorigin="anonymous"></script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id={{analytics.key}}"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{analytics.key}}" crossorigin="anonymous"></script>
   <script nonce="{{nonce}}">
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}

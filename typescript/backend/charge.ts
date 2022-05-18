@@ -123,6 +123,9 @@ app.use(
         "style-src-elem": ["'self'", "https://cdn.jsdelivr.net"],
       },
     },
+    // Need to disable this because stripe doesn't set the
+    // crossorigin attribute on the iframes or scripts it brings in
+    crossOriginEmbedderPolicy: false,
   })
 );
 app.use(compression());
