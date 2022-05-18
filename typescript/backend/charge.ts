@@ -1,10 +1,11 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
 import { urlencoded, json } from "body-parser";
 import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
-import hbs from "express-handlebars";
+import { create } from "express-handlebars";
 import helmet from "helmet";
 // eslint-disable-next-line unicorn/import-style
 import { join } from "path";
@@ -12,6 +13,8 @@ import favicon from "serve-favicon";
 import serverless from "serverless-http";
 import Stripe from "stripe";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+// eslint-disable-next-line node/no-unpublished-import
+import type { EmailPayload } from "@dazser/mailer/dist/merge";
 import calculateFee from "../fee";
 import { getStripePublicKey, getStripePrivateKey } from "./get-stripe-keys";
 
@@ -29,54 +32,15 @@ interface FrontEndForm {
 }
 
 interface CheckoutSessionSucceededObject {
-  // eslint-disable-next-line camelcase
   amount_total: number;
-  // eslint-disable-next-line camelcase
   client_reference_id: string;
-  // eslint-disable-next-line camelcase
   customer_email: string;
   metadata: {
     jkAmount: string;
     jkInvoice: string;
   };
-  // eslint-disable-next-line camelcase
   payment_intent: string;
-  // eslint-disable-next-line camelcase
   payment_status: string;
-}
-
-interface EmailPayload {
-  attachments?: string; // This is a path to S3 for the attachment
-  bcc?: string | string[];
-  body: string; // This is the inner body of the message
-  calendar?: string; // This is an iCal string
-  cc?: string | string[];
-  dsn?: boolean;
-  from: {
-    address: string;
-    name?: string;
-  };
-  invoice?: {
-    file: {
-      // This is the S3 Invoice PDF
-      content: Buffer;
-      filename: string;
-    };
-    info: string;
-    invoice: string;
-  };
-  performance?: {
-    // This is only included in the Performance Payload
-    custName: string;
-    header: string;
-    serviceAddress: string;
-    unique: string;
-  };
-  preview?: string;
-  regionnum: string; // This gives me the regionnum so I can get regionInfo
-  subject: string;
-  template: "notify.html"; // This is the template to merge with
-  to: string;
 }
 
 const parseInfo = (info: string): InvoicePayload => {
@@ -87,9 +51,7 @@ const parseInfo = (info: string): InvoicePayload => {
     ) as InvoicePayload;
   } catch (error) {
     // Something is wrong with the info's encoding
-    // eslint-disable-next-line no-console
     console.error("Bad Params", {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       error,
       info,
     });
@@ -131,55 +93,60 @@ app.use(
         "connect-src": [
           "'self'",
           "https://google.com",
-          // eslint-disable-next-line sonarjs/no-duplicate-string
-          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
           "https://stats.g.doubleclick.net",
+          "https://checkout.stripe.com",
+          "https://api.stripe.com",
         ],
-        // eslint-disable-next-line sonarjs/no-duplicate-string
-        "frame-src": ["https://js.stripe.com"],
+        "frame-src": [
+          "https://js.stripe.com",
+          "https://checkout.stripe.com",
+          "https://hooks.stripe.com",
+        ],
         "img-src": [
           "'self'",
           "data:",
           "https://www.google.com",
           `'nonce-${nonce}'`,
+          "https://*.stripe.com",
         ],
         "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
         "script-src": [
           "'self'",
           "https://js.stripe.com",
+          "https://checkout.stripe.com",
           "https://polyfill.io",
-          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
           `'nonce-${nonce}'`,
         ],
         "script-src-elem": [
           "'self'",
           "https://js.stripe.com",
           "https://polyfill.io",
-          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
           `'nonce-${nonce}'`,
         ],
         "style-src": ["'self'", "https://cdn.jsdelivr.net"],
         "style-src-elem": ["'self'", "https://cdn.jsdelivr.net"],
       },
     },
+    // Need to disable this because stripe doesn't set the
+    // crossorigin attribute on the iframes or scripts it brings in
+    crossOriginEmbedderPolicy: false,
   })
 );
 app.use(compression());
 app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 app.use(Express.static(join(__dirname, "..", "..", "public")));
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
-app.engine(
-  "hbs",
-  hbs({
-    defaultLayout: "main",
-    extname: ".hbs",
-    layoutsDir: join(__dirname, "..", "..", "views", "layouts"),
-    partialsDir: join(__dirname, "..", "..", "views"),
-  })
-);
+const hbs = create({
+  extname: ".hbs",
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
 app.set("views", join(__dirname, "..", "..", "views"));
 
@@ -268,6 +235,7 @@ app.post(
       from: { address: "network.admin@dazser.com", name: "Payment Portal" },
       regionnum: key.regionNumber,
       subject: "Payment Notification",
+      // @ts-expect-error I know it's an enum, but I'm using as a string
       template: "notify.html",
       to:
         process.env.NODE_ENV === "production"
@@ -275,14 +243,12 @@ app.post(
           : "kyle@dazser.com",
     })
       .then((success) => {
-        // eslint-disable-next-line promise/always-return
         if (success) {
           return response.sendStatus(200);
         }
         return response.sendStatus(500);
       })
       .catch((error) => {
-        // eslint-disable-next-line no-console
         console.error("Stripe Webhook Error", error);
         return response.sendStatus(500);
       });
@@ -298,7 +264,6 @@ app.post(
     const key = getStripePrivateKey(city);
     if (key.stripePrivateKey === "") {
       // The city is incorrect, idk what is wrong...
-      // eslint-disable-next-line no-console
       console.error("Invalid City");
     }
 
@@ -310,7 +275,6 @@ app.post(
     // Check to see if the fee we told them would be the fee calculated
     if (fee.display.total !== parsed.totalAmount) {
       // Something is wrong
-      // eslint-disable-next-line no-console
       console.error("THE PARSED AND CALCULATED FEE ARE DIFFERENT", parsed, fee);
     }
 
@@ -347,10 +311,8 @@ app.post(
           "jkInvoice": parsed.invoice,
         },
         mode: "payment",
-        payment_method_types: ["card"],
         success_url: "https://pay.dazser.com/success",
       })
-      // eslint-disable-next-line promise/always-return
       .then((session) => {
         return response.json({ id: session.id });
       });
@@ -378,7 +340,6 @@ app.get(
       try {
         fee = calculateFee(Number.parseFloat(parsed.amount));
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error, `Info: ${info}`);
         return response.status(400).render("map", { nonce });
       }

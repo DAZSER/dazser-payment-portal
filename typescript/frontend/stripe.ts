@@ -15,14 +15,11 @@ interface FrontEndForm {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
   amount?: string;
-  // eslint-disable-next-line camelcase
   convenience_fee?: string;
   email?: string;
   invoice?: string;
   regionName?: string;
-  // eslint-disable-next-line camelcase
   region_num?: string;
-  // eslint-disable-next-line camelcase
   total_amount?: string;
 }
 
@@ -114,7 +111,6 @@ form.addEventListener("submit", (event) => {
       }
     })
     .catch((error) => {
-      // eslint-disable-next-line no-console
       console.error("Error:", error);
       payButtonStateChanger(PayButtonState.SUBMITTABLE);
     });
