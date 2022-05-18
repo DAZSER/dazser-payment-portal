@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 // Backend, lol (it serves the frontend)
 // This is the server side renderer
 import { urlencoded, json } from "body-parser";
@@ -92,22 +93,28 @@ app.use(
         "connect-src": [
           "'self'",
           "https://google.com",
-          // eslint-disable-next-line sonarjs/no-duplicate-string
           "https://www.googletagmanager.com",
           "https://stats.g.doubleclick.net",
+          "https://checkout.stripe.com",
+          "https://api.stripe.com",
         ],
-        // eslint-disable-next-line sonarjs/no-duplicate-string
-        "frame-src": ["https://js.stripe.com"],
+        "frame-src": [
+          "https://js.stripe.com",
+          "https://checkout.stripe.com",
+          "https://hooks.stripe.com",
+        ],
         "img-src": [
           "'self'",
           "data:",
           "https://www.google.com",
           `'nonce-${nonce}'`,
+          "https://*.stripe.com",
         ],
         "report-uri": ["https://dazser.report-uri.com/r/d/csp/enforce"],
         "script-src": [
           "'self'",
           "https://js.stripe.com",
+          "https://checkout.stripe.com",
           "https://polyfill.io",
           "https://www.googletagmanager.com",
           `'nonce-${nonce}'`,
