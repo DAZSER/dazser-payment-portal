@@ -239,7 +239,7 @@ app.post(
       template: "notify.html",
       to:
         process.env.NODE_ENV === "production"
-          ? "sanderson@dazser.com, chiki.bodley@dazser.com, jade.dato@dazser.com, collections.assistant@dazser.com"
+          ? "controller@dazser.com, accounting1@dazser.com, accounting2@dazser.com, collections2@dazser.com, collections3@dazser.com"
           : "kyle@dazser.com",
     })
       .then((success) => {
