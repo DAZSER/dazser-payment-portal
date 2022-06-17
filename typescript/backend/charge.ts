@@ -5,6 +5,7 @@ import { urlencoded, json } from "body-parser";
 import compression from "compression";
 import crypto from "crypto";
 import Express from "express";
+import type { RequestHandler } from "express";
 import { create } from "express-handlebars";
 import helmet from "helmet";
 // eslint-disable-next-line unicorn/import-style
@@ -133,13 +134,13 @@ app.use(
     // Need to disable this because stripe doesn't set the
     // crossorigin attribute on the iframes or scripts it brings in
     crossOriginEmbedderPolicy: false,
-  })
+  }) as RequestHandler
 );
 app.use(compression());
 app.use(favicon(join(__dirname, "..", "..", "public", "favicon.ico")));
 app.use(Express.static(join(__dirname, "..", "..", "public")));
-app.use(urlencoded({ extended: false }));
-app.use(json());
+app.use(urlencoded({ extended: false }) as RequestHandler);
+app.use(json() as RequestHandler);
 
 const hbs = create({
   extname: ".hbs",
@@ -239,7 +240,7 @@ app.post(
       template: "notify.html",
       to:
         process.env.NODE_ENV === "production"
-          ? "sanderson@dazser.com, chiki.bodley@dazser.com, jade.dato@dazser.com, collections.assistant@dazser.com"
+          ? "controller@dazser.com, accounting1@dazser.com, accounting2@dazser.com, collections2@dazser.com, collections3@dazser.com"
           : "kyle@dazser.com",
     })
       .then((success) => {
