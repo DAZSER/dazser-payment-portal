@@ -1,9 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "es2021",
-    "lib": ["ES2021", "DOM"],
-    "outDir": "dist",
+    "lib": [],
     "rootDir": "typescript",
   },
   "exclude": [
