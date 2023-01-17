@@ -28,7 +28,9 @@ export const getStripePrivateKey = (city: string): stripePrivateKey => {
     case "birmingham":
       return {
         regionNumber: "3",
-        stripePrivateKey: process.env["STRIPE_BIRMINGHAM_PRIVATE_KEY"] as string,
+        stripePrivateKey: process.env[
+          "STRIPE_BIRMINGHAM_PRIVATE_KEY"
+        ] as string,
       };
     /* istanbul ignore next */
     case "baltimore":
