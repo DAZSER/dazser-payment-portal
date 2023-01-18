@@ -44,6 +44,15 @@ interface CheckoutSessionSucceededObject {
   payment_status: string;
 }
 
+export interface ParametersDictionary {
+  [key: string]: string;
+}
+
+interface RequestParameters<T extends ParametersDictionary>
+  extends Express.Request {
+  params: T;
+}
+
 const parseInfo = (info: string): InvoicePayload => {
   // Now, setup any passed variables
   try {
@@ -71,7 +80,7 @@ const notify = async (payload: EmailPayload): Promise<boolean> => {
   try {
     const command = new SendMessageCommand({
       MessageBody: JSON.stringify(payload),
-      QueueUrl: process.env.SQS_QUEUE as string,
+      QueueUrl: process.env["SQS_QUEUE"] as string,
     });
     await sqs.send(command);
     return true;
@@ -163,7 +172,10 @@ app.get("/success", (_request: Express.Request, response: Express.Response) => {
 
 app.post(
   "/webhook/:city",
-  (request: Express.Request, response: Express.Response) => {
+  (
+    request: RequestParameters<{ city: string }>,
+    response: Express.Response
+  ) => {
     // This deals with the web hook from Stripe
     const payload = request.body as Stripe.Event;
     // const signature = request.headers["Stripe-Signature"];
@@ -239,7 +251,7 @@ app.post(
       // @ts-expect-error I know it's an enum, but I'm using as a string
       template: "notify.html",
       to:
-        process.env.NODE_ENV === "production"
+        process.env["NODE_ENV"] === "production"
           ? "controller@dazser.com, accounting1@dazser.com, accounting2@dazser.com, collections2@dazser.com, collections3@dazser.com"
           : "kyle@dazser.com",
     })
@@ -258,7 +270,10 @@ app.post(
 
 app.post(
   "/createCheckoutSession/:city",
-  (request: Express.Request, response: Express.Response) => {
+  (
+    request: RequestParameters<{ city: string }>,
+    response: Express.Response
+  ) => {
     // This api endpoint will create the checkout session id
     const { city } = request.params;
     const parsed = request.body as FrontEndForm;
@@ -280,7 +295,7 @@ app.post(
     }
 
     const stripe = new Stripe(key.stripePrivateKey, {
-      apiVersion: "2020-08-27",
+      apiVersion: "2022-11-15",
       typescript: true,
     });
 
@@ -322,7 +337,10 @@ app.post(
 
 app.get(
   "/:city/:info?",
-  (request: Express.Request, response: Express.Response) => {
+  (
+    request: RequestParameters<{ city: string; info: string }>,
+    response: Express.Response
+  ) => {
     // This api endpoint will return the server side rendered checkout page
     // Verify the city
     const { city, info } = request.params;
@@ -348,7 +366,7 @@ app.get(
 
     const context = {
       analytics: {
-        key: process.env.ANALYTICS_KEY as string,
+        key: process.env["ANALYTICS_KEY"] as string,
       },
       form: {
         amount: parsed?.amount ?? "",
