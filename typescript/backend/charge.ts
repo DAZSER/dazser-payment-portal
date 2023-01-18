@@ -295,7 +295,7 @@ app.post(
     }
 
     const stripe = new Stripe(key.stripePrivateKey, {
-      apiVersion: "2020-08-27",
+      apiVersion: "2022-11-15",
       typescript: true,
     });
 
