@@ -89,7 +89,7 @@
     "inputmask": "^5.0.7",
     "serve-favicon": "^2.5.0",
     "serverless-http": "^3.1.1",
-    "stripe": "^11.6.0"
+    "stripe": "^11.9.1"
   },
   "overrides": {
     "@types/express-serve-static-core": "^4.17.29"
